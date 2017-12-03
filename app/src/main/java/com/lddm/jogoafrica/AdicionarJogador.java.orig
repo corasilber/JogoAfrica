@@ -119,12 +119,19 @@ public class AdicionarJogador extends AppCompatActivity {
        jogar.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View view) {
+<<<<<<< Updated upstream
+               adicionaJogadoresNaListaEquipe();
+               Intent changeScreen = new Intent(AdicionarJogador.this, TelaPreparacao.class);
+                    changeScreen.putExtra("listaEquipes", (Serializable) equipe);
+                    changeScreen.putExtra("todasPalavras", todasPalavras);
+               startActivity(changeScreen);
+=======
             adicionaJogadoresNaListaEquipe();
-            Networking.enviarJogadores(jogadores, MainActivity.session);
             Intent changeScreen = new Intent(AdicionarJogador.this, TelaPreparacao.class);
             changeScreen.putExtra("listaEquipes", (Serializable) equipe);
             changeScreen.putExtra("todasPalavras", todasPalavras);
             startActivity(changeScreen);
+>>>>>>> Stashed changes
 
            }
        });

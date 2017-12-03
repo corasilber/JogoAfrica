@@ -18,10 +18,15 @@
         </activity>
         <activity android:name=".AdicionarJogador" />
         <activity android:name=".MontarEquipe" />
-        <activity android:name=".TelaPreparacao" />
-        <activity android:name=".TimerActivity" />
-        <activity android:name=".EquipeJoga"></activity>
+        <activity android:name=".TelaPreparacao"/>
+        <activity android:name=".TimerActivity">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+        </activity>
     </application>
     <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true" />
-    <uses-permission android:name="android.permission.INTERNET" />
+
 </manifest>
