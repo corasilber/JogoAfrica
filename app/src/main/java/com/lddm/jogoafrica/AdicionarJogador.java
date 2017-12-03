@@ -1,6 +1,7 @@
 package com.lddm.jogoafrica;
 
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,9 +13,10 @@ import android.widget.Toast;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
-public class AdicionarJogador extends AppCompatActivity {
+public class AdicionarJogador extends AppCompatActivity implements GetTeams {
 
     ArrayList<String> listaEquipes, todasPalavras;
     Integer quantidadePalavras, quantidadeJogadores;
@@ -22,6 +24,8 @@ public class AdicionarJogador extends AppCompatActivity {
     List<Jogador> jogadores = new ArrayList<>();
     int count = 0;
     Button jogar;
+    private Handler handler = new Handler();
+    private Runnable runnable;
 
 
 
@@ -37,7 +41,13 @@ public class AdicionarJogador extends AppCompatActivity {
 
         jogar = (Button) findViewById(R.id.jogarButton);
 
-
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                Networking.buscarJogadores(AdicionarJogador.this, MainActivity.session);
+                handler.postDelayed(this, 3000);
+            }
+        };
        // quantidadePalavras = Integer.parseInt(getIntent().getStringExtra("qtdPalavras")); // pega a qtd palavras do outro intent
         String qtdJog = getIntent().getStringExtra("qtdJogador"); // pega a qtd de jogadores do outro intent
         quantidadeJogadores = Integer.parseInt(qtdJog);
@@ -69,7 +79,7 @@ public class AdicionarJogador extends AppCompatActivity {
 
 
                         final EditText nome = (EditText) view2.findViewById(R.id.nomeJogador);
-                        final EditText palavraA = (EditText) view2.findViewById(R.id.palavra1);
+                        final EditText palavraA = (EditText) view2.findViewById(R.id.palequipeJson.wordsavra1);
                         final EditText palavraB = (EditText) view2.findViewById(R.id.palavra2);
                         final EditText palavraC = (EditText) view2.findViewById(R.id.palavra3);
                         Button addJogador = (Button) view2.findViewById(R.id.adicionaPalavras);
@@ -120,20 +130,14 @@ public class AdicionarJogador extends AppCompatActivity {
            @Override
            public void onClick(View view) {
             adicionaJogadoresNaListaEquipe();
-            if(verificaInseriuTodos()) {
-                Networking.enviarJogadores(jogadores, MainActivity.session);
-                Intent changeScreen = new Intent(AdicionarJogador.this, TelaPreparacao.class);
-                changeScreen.putExtra("listaEquipes", (Serializable) equipe);
-                changeScreen.putExtra("todasPalavras", todasPalavras);
-                startActivity(changeScreen);
-            }
+            Networking.enviarJogadores(jogadores, MainActivity.session);
+            handler.postDelayed(runnable, 3000);
+
            }
        });
     }
 
     public void populaEquipe(ArrayList<String> listaEquipes){
-
-
         for(int i =0; i < listaEquipes.size(); i++){
             Equipe e = new Equipe();
             e.setNome(listaEquipes.get(i));
@@ -164,23 +168,31 @@ public class AdicionarJogador extends AppCompatActivity {
          }
      }
 
-     public boolean verificaInseriuTodos(){
+    @Override
+    public void getTeammates(EquipeJson equipeJson) {
+        handler.removeCallbacks(runnable);
+        equipe = new ArrayList<>();
+        jogadores = new ArrayList<>();
+            List<Jogador> jogadoresAtuais = new ArrayList<>();
+        for (HashMap.Entry<String,List<String>> entry : equipeJson.equipes.entrySet()) {
+            String key = entry.getKey();
+            for (String s : value) {
+            List<String> value = entry.getValue();
+                Jogador j = new Jogador();
+                j.setEquipe(key);
+                j.setNome(s);
+                jogadoresAtuais.add(j);
+            }
+            Equipe e = new Equipe();
+            e.setNome(key);
+            e.setListaJogador(jogadoresAtuais);
+        }
 
-         boolean inseriu = true;
-         String faltou ="Faltou inserir jogadores na(s) equipe(s): ";
-         for(int i =0; i < listaEquipes.size(); i++){
-             if(equipe.get(i).getListaJogador().size() != quantidadeJogadores){
-                 faltou += equipe.get(i).getNome()+" -- ";
-                 inseriu = false;
-             }
-         }
-         if(!inseriu){
-             Toast toast = Toast.makeText(getApplicationContext(),
-                    "Erro! "+faltou, Toast.LENGTH_SHORT);
-             toast.show();
-         }
 
-         return inseriu;
-     }
+        Intent changeScreen = new Intent(AdicionarJogador.this, TelaPreparacao.class);
+        changeScreen.putExtra("listaEquipes", (Serializable) equipe);
+        changeScreen.putExtra("todasPalavras", equipeJson.words);
+        startActivity(changeScreen);
 
+    }
 }

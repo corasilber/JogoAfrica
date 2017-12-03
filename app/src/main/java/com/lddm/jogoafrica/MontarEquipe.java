@@ -97,20 +97,13 @@ public class MontarEquipe extends AppCompatActivity {
         adicionar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                if(count < numEquipe) {
-                    int qtd = numEquipe - count;
-                    Toast toast = Toast.makeText(getApplicationContext(),
-                            "Erro! Faltam Inserir "+qtd+" equipe(s)", Toast.LENGTH_SHORT);
-                    toast.show();
-                } else {
-                    final String qtdJogador = numJogador.getSelectedItem().toString();
-                    Networking.enviarEquipes(equipes, MainActivity.session);
-                    Intent changeScreen = new Intent(MontarEquipe.this, AdicionarJogador.class);
-                    changeScreen.putExtra("nomeEquipes", equipes);
+                Networking.enviarEquipes(equipes, MainActivity.session, numJogador.getSelectedItem().toString());
+                Intent changeScreen = new Intent(MontarEquipe.this, AdicionarJogador.class);
+                changeScreen.putExtra("nomeEquipes", equipes);
+//                changeScreen.putExtra("qtdPalavras", palavras);
+//                changeScreen.putExtra("qtdJogador", qtdJogador);
+                startActivity(changeScreen);
                     changeScreen.putExtra("qtdJogador", qtdJogador);
-                    startActivity(changeScreen);
-                }
             }
         });
 

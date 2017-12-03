@@ -13,12 +13,13 @@ class Session:
 		self.nome_equipes = []
 		self.equipes = {}
 		self.timestamp = 0
+		self.num_jogadores = 0
 
 a = Session()
 a.nome_equipes = ["Equipe 1", "Equipe 2"]
 sessions = {1: a}
 
-@app.route('/create_session', methods=['GET'])
+@app.route('/create_session/', methods=['GET'])
 def new_session():
 	session = randrange(99999)
 	while session in sessions.keys():
@@ -27,12 +28,15 @@ def new_session():
 	print(sessions.keys())
 	return str(session)
 
-@app.route('/send_teams/<int:session>', methods=['POST'])
-def send_teams(session):
+@app.route('/send_teams', methods=['POST'])
+def send_teams():
+	session = int(request.args.get('session'))
+	num_jogadores = int(request.args.get('num_jogadores'))
 	if not request.json or session not in sessions:
 		abort(400)
 
 	sessions[session].nome_equipes.extend(request.get_json())
+	sessions[session].num_jogadores = num_jogadores
 	print(sessions[session].nome_equipes)
 	return "", 201
 
@@ -56,6 +60,14 @@ def send_team_members(session):
 	print(sessions[session].equipes)
 	return "", 201
 
+@app.route('/get_team_members/<int:session>', methods=['GET'])
+def get_team_members(session):
+	if session not in sessions:
+		abort(400)
+	if sum([len(j) for j in sessions[session].equipes.values()]) >= len(sessions[session].nome_equipes) * sessions[session].num_jogadores:
+		return dumps(sessions[session].__dict__), 201
+	else:
+		return "", 200
 
 @app.route('/send_words/<int:session>', methods=['POST'])
 def send_word(session):
@@ -80,7 +92,7 @@ def is_words_complete(session):
 		abort(400)
 
 	num_jogadores = sum([len(j) for _, j in sessions[session].nome_equipes])
-	return str(len(sessions[session].words) >= num_jogadores), 200	
+	return str(len(sessions[session].words) >= num_jogadores * 3), 200	
 
 @app.route('/start_timer/<int:session>', methods=['POST'])
 def start_timer(session):
