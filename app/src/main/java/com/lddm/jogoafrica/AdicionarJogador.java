@@ -79,7 +79,7 @@ public class AdicionarJogador extends AppCompatActivity implements GetTeams {
 
 
                         final EditText nome = (EditText) view2.findViewById(R.id.nomeJogador);
-                        final EditText palavraA = (EditText) view2.findViewById(R.id.palequipeJson.wordsavra1);
+                        final EditText palavraA = (EditText) view2.findViewById(R.id.palavra1);
                         final EditText palavraB = (EditText) view2.findViewById(R.id.palavra2);
                         final EditText palavraC = (EditText) view2.findViewById(R.id.palavra3);
                         Button addJogador = (Button) view2.findViewById(R.id.adicionaPalavras);
@@ -176,8 +176,8 @@ public class AdicionarJogador extends AppCompatActivity implements GetTeams {
             List<Jogador> jogadoresAtuais = new ArrayList<>();
         for (HashMap.Entry<String,List<String>> entry : equipeJson.equipes.entrySet()) {
             String key = entry.getKey();
-            for (String s : value) {
             List<String> value = entry.getValue();
+            for (String s : value) {
                 Jogador j = new Jogador();
                 j.setEquipe(key);
                 j.setNome(s);

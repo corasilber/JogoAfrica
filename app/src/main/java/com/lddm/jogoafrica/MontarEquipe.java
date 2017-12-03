@@ -99,11 +99,12 @@ public class MontarEquipe extends AppCompatActivity {
             public void onClick(View view) {
                 Networking.enviarEquipes(equipes, MainActivity.session, numJogador.getSelectedItem().toString());
                 Intent changeScreen = new Intent(MontarEquipe.this, AdicionarJogador.class);
+                String qtdJogador = numJogador.getSelectedItem().toString();
                 changeScreen.putExtra("nomeEquipes", equipes);
 //                changeScreen.putExtra("qtdPalavras", palavras);
 //                changeScreen.putExtra("qtdJogador", qtdJogador);
-                startActivity(changeScreen);
                     changeScreen.putExtra("qtdJogador", qtdJogador);
+                startActivity(changeScreen);
             }
         });
 
