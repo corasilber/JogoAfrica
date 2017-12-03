@@ -23,7 +23,7 @@
         android:layout_marginLeft="45dp"/>
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/adicionar"
         android:layout_width="161dp"
         android:layout_height="wrap_content"
         android:text="Adicionar"
