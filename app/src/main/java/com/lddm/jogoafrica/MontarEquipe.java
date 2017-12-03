@@ -94,7 +94,7 @@ public class MontarEquipe extends AppCompatActivity {
         adicionar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Networking.enviarEquipes(equipes, MainActivity.session);
+                Networking.enviarEquipes(equipes, MainActivity.session, numJogador.getSelectedItem().toString());
                 Intent changeScreen = new Intent(MontarEquipe.this, AdicionarJogador.class);
                 changeScreen.putExtra("nomeEquipes", equipes);
 //                changeScreen.putExtra("qtdJogador", qtdJogador);

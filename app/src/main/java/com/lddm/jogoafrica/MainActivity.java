@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements TeamAPI {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         MainActivity.session = Integer.parseInt(input.getText().toString());
-                        handler.postDelayed(runnable, 0);
+                        handler.postDelayed(runnable, 3000);
 
                     }
                 });
@@ -93,9 +93,7 @@ public class MainActivity extends AppCompatActivity implements TeamAPI {
 
     @Override
     public void getTeams(ArrayList<String> equipes) {
-        if (equipes.isEmpty()) {
-            handler.postDelayed(runnable, 3000);
-        } else {
+        if (!equipes.isEmpty()) {
             handler.removeCallbacks(runnable);
             Intent changeScreen = new Intent(MainActivity.this, AdicionarJogador.class);
             changeScreen.putExtra("nomeEquipes", equipes);

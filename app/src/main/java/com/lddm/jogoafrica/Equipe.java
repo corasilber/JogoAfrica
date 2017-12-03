@@ -1,6 +1,8 @@
 package com.lddm.jogoafrica;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -39,4 +41,14 @@ public class Equipe implements Serializable{
     public void setListaJogador(List<Jogador> listaJogador) {
         this.listaJogador = listaJogador;
     }
+}
+
+
+class EquipeJson {
+    public int num_jogadores;
+    public int connected;
+    public ArrayList<String> words;
+    public int timestamp;
+    public ArrayList<String> nome_equipes;
+    public HashMap<String, List<String>> equipes;
 }
