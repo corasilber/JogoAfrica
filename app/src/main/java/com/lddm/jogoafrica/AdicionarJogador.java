@@ -39,10 +39,10 @@ public class AdicionarJogador extends AppCompatActivity {
 
 
        // quantidadePalavras = Integer.parseInt(getIntent().getStringExtra("qtdPalavras")); // pega a qtd palavras do outro intent
-       // quantidadeJogadores = Integer.parseInt(getIntent().getStringExtra("qtdJogadores")); // pega a qtd de jogadores do outro intent
+        String qtdJog = getIntent().getStringExtra("qtdJogador"); // pega a qtd de jogadores do outro intent
+        quantidadeJogadores = Integer.parseInt(qtdJog);
 
-
-       final LinearLayout linearLayout = (LinearLayout)findViewById(R.id.linearLayout);
+        final LinearLayout linearLayout = (LinearLayout)findViewById(R.id.linearLayout);
 
        //adicionar vários botões de acordo com a quantidade de equipes
         for(int i =0; i<listaEquipes.size(); i++){
@@ -83,9 +83,9 @@ public class AdicionarJogador extends AppCompatActivity {
                             @Override
                             public void onClick(View view) {
 
-                                if ( !nome.getText().toString().isEmpty() ||
-                                        !palavraA.getText().toString().isEmpty() ||
-                                        !palavraB.getText().toString().isEmpty() ||
+                                if ( !nome.getText().toString().isEmpty() &&
+                                        !palavraA.getText().toString().isEmpty() &&
+                                        !palavraB.getText().toString().isEmpty() &&
                                         !palavraC.getText().toString().isEmpty()) {
 
                                     jog.setNome(nome.getText().toString());
@@ -120,12 +120,13 @@ public class AdicionarJogador extends AppCompatActivity {
            @Override
            public void onClick(View view) {
             adicionaJogadoresNaListaEquipe();
-            Networking.enviarJogadores(jogadores, MainActivity.session);
-            Intent changeScreen = new Intent(AdicionarJogador.this, TelaPreparacao.class);
-            changeScreen.putExtra("listaEquipes", (Serializable) equipe);
-            changeScreen.putExtra("todasPalavras", todasPalavras);
-            startActivity(changeScreen);
-
+            if(verificaInseriuTodos()) {
+                Networking.enviarJogadores(jogadores, MainActivity.session);
+                Intent changeScreen = new Intent(AdicionarJogador.this, TelaPreparacao.class);
+                changeScreen.putExtra("listaEquipes", (Serializable) equipe);
+                changeScreen.putExtra("todasPalavras", todasPalavras);
+                startActivity(changeScreen);
+            }
            }
        });
     }
@@ -147,6 +148,7 @@ public class AdicionarJogador extends AppCompatActivity {
         }
         return pos;
     }
+
      public void adicionaJogadoresNaListaEquipe(){
 
          for(int i =0; i < equipe.size(); i++){
@@ -160,6 +162,25 @@ public class AdicionarJogador extends AppCompatActivity {
              }
              equipe.get(i).setListaJogador(joga);
          }
+     }
+
+     public boolean verificaInseriuTodos(){
+
+         boolean inseriu = true;
+         String faltou ="Faltou inserir jogadores na(s) equipe(s): ";
+         for(int i =0; i < listaEquipes.size(); i++){
+             if(equipe.get(i).getListaJogador().size() != quantidadeJogadores){
+                 faltou += equipe.get(i).getNome()+" -- ";
+                 inseriu = false;
+             }
+         }
+         if(!inseriu){
+             Toast toast = Toast.makeText(getApplicationContext(),
+                    "Erro! "+faltou, Toast.LENGTH_SHORT);
+             toast.show();
+         }
+
+         return inseriu;
      }
 
 }

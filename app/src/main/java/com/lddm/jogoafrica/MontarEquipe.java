@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.lddm.jogoafrica.data.JogoContract;
 import com.lddm.jogoafrica.data.JogoDbHelper;
@@ -19,11 +20,12 @@ import java.util.ArrayList;
 
 public class MontarEquipe extends AppCompatActivity {
 
-    Spinner numeroEquipe, numJogador, qtdPalavras;
+    Spinner numeroEquipe, numJogador;
 
     Button inserirEquipe, adicionar;
 
     ArrayList<String> equipes;
+    int numEquipe;
 
     int count = 0;
 
@@ -34,26 +36,22 @@ public class MontarEquipe extends AppCompatActivity {
 
         numeroEquipe =(Spinner) findViewById(R.id.numEquipe);
         numJogador = (Spinner) findViewById(R.id.numJogador);
-        qtdPalavras = (Spinner) findViewById(R.id.qtdPalavra);
         inserirEquipe = (Button) findViewById(R.id.buttonInserir) ;
         adicionar = (Button) findViewById(R.id.button3);
 
         equipes = new ArrayList<>();
-        Integer[] items = new Integer[]{1,2,3};
+        Integer[] items = new Integer[]{2,3,4};
 
         ArrayAdapter<Integer> adapterEquipe = new ArrayAdapter<Integer>(this, android.R.layout.simple_spinner_item, items);
         numeroEquipe.setAdapter(adapterEquipe);
-        final int numEquipe = Integer.parseInt(numeroEquipe.getSelectedItem().toString());
+
 
         ArrayAdapter<Integer> adapterJogador = new ArrayAdapter<Integer>(this, android.R.layout.simple_spinner_item, items);
         numJogador.setAdapter(adapterJogador);
-        final String qtdJogador = numJogador.getSelectedItem().toString();
 
-        ArrayAdapter<Integer> adapterPalavras = new ArrayAdapter<Integer>(this, android.R.layout.simple_spinner_item, items);
-        qtdPalavras.setAdapter(adapterPalavras);
-        final String palavras = qtdPalavras.getSelectedItem().toString();
 
-        if(count <= numEquipe) {
+
+//        if(count <= numEquipe) {
 
             //aqui vai abrir um dialog para a pessoa digitar o nome da equipe
             inserirEquipe.setOnClickListener(new View.OnClickListener() {
@@ -63,8 +61,8 @@ public class MontarEquipe extends AppCompatActivity {
                     View view2 =  getLayoutInflater().inflate(R.layout.tela_adiciona_equipe,null);
                     final EditText nomeEquipe = (EditText) view2.findViewById(R.id.nomeEquipe);
                     Button addEquipe= (Button) view2.findViewById(R.id.adicionar);
-
-                    alertBuilder.setView(view2);
+                    numEquipe = Integer.parseInt(numeroEquipe.getSelectedItem().toString());
+                        alertBuilder.setView(view2);
 
                     final AlertDialog dialog = alertBuilder.create();
                     dialog.show();
@@ -74,32 +72,45 @@ public class MontarEquipe extends AppCompatActivity {
                         @Override
                         public void onClick(View view) {
 
-                            if (!nomeEquipe.getText().toString().isEmpty()) {
-                                String nome = nomeEquipe.getText().toString(); // nome da equipe que a pessoa digitar
-                                equipes.add(nome);
-                                dialog.dismiss();
-                                count++;
+                            if(count < numEquipe) {
+                                if (!nomeEquipe.getText().toString().isEmpty()) {
+                                    String nome = nomeEquipe.getText().toString(); // nome da equipe que a pessoa digitar
+                                    equipes.add(nome);
+                                    dialog.dismiss();
+                                    count++;
+                                } else {
+                                    nomeEquipe.setError("Digite um nome para inserir!");
+                                }
                             } else {
-                                nomeEquipe.setError("Digite um nome para inserir!");
-
+                                Toast toast = Toast.makeText(getApplicationContext(),
+                                        "Erro! Já foi inserido todas equipes!", Toast.LENGTH_SHORT);
+                                toast.show();
                             }
 
                         }
                     }); // fim setOnClick botão adicionar nome
                 }
             }); // fim setOnclick botão inserir equipe
-        } // inserir somente quantidade de equipes pre selecionadas
+        //} // inserir somente quantidade de equipes pre selecionadas
 
 
         adicionar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Networking.enviarEquipes(equipes, MainActivity.session);
-                Intent changeScreen = new Intent(MontarEquipe.this, AdicionarJogador.class);
-                changeScreen.putExtra("nomeEquipes", equipes);
-//                changeScreen.putExtra("qtdJogador", qtdJogador);
-//                changeScreen.putExtra("qtdPalavras", palavras);
-                startActivity(changeScreen);
+
+                if(count < numEquipe) {
+                    int qtd = numEquipe - count;
+                    Toast toast = Toast.makeText(getApplicationContext(),
+                            "Erro! Faltam Inserir "+qtd+" equipe(s)", Toast.LENGTH_SHORT);
+                    toast.show();
+                } else {
+                    final String qtdJogador = numJogador.getSelectedItem().toString();
+                    Networking.enviarEquipes(equipes, MainActivity.session);
+                    Intent changeScreen = new Intent(MontarEquipe.this, AdicionarJogador.class);
+                    changeScreen.putExtra("nomeEquipes", equipes);
+                    changeScreen.putExtra("qtdJogador", qtdJogador);
+                    startActivity(changeScreen);
+                }
             }
         });
 

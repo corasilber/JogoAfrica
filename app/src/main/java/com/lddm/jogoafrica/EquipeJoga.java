@@ -1,26 +1,32 @@
 package com.lddm.jogoafrica;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextClock;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 public class EquipeJoga extends AppCompatActivity {
 
     List<Equipe> listaEquipes;
-    ArrayList<String> todasPalavras;
-    TextView nomeEquipe, nomeJogador;
+    ArrayList<String> todasPalavras, todasPalavrasClone, pontuacaoEquipes;
+    TextView nomeEquipe, nomeJogador, fase;
     Button jogar;
-    int countEquipe, countJogador, qtdPalavras, pontuacao;
+    int countEquipe, countJogador, qtdPalavras, pontuacao, qualFase;
     String equipe, jogador;
+    ListView listaPontuacao;
+    ArrayAdapter<String> adapter;
 
 
 
@@ -31,19 +37,35 @@ public class EquipeJoga extends AppCompatActivity {
 
         listaEquipes = (List<Equipe>) getIntent().getSerializableExtra("listaEquipes");
         todasPalavras = (ArrayList<String>) getIntent().getSerializableExtra("todasPalavras");
+        todasPalavrasClone = (ArrayList<String>) getIntent().getSerializableExtra("todasPalavras");
+
         nomeEquipe = (TextView) findViewById(R.id.nomeEquipe);
         nomeJogador = (TextView) findViewById (R.id.jogador);
         jogar = (Button) findViewById(R.id.jogar);
+        listaPontuacao = (ListView) findViewById(R.id.pontuacao);
+        fase = (TextView) findViewById(R.id.fase);
+        pontuacaoEquipes = new ArrayList<>();
 
-        qtdPalavras = todasPalavras.size();
+        populaListaPontuacao();
+        qualFase = 0;
+
+        adapter = new ArrayAdapter<>(this, R.layout.item_lista,R.id.listaView, pontuacaoEquipes);
+        ListView list = (ListView) findViewById(R.id.pontuacao);
+        list.setAdapter(adapter);
+
+         qtdPalavras = todasPalavras.size();
+
+        setaFaseTextView();
 
 
-            countEquipe = 0;
-            countJogador = 0;
-            equipe = listaEquipes.get(0).getNome();
-            jogador = listaEquipes.get(0).getListaJogador().get(0).getNome();
-            nomeEquipe.setText(equipe);
-            nomeJogador.setText(jogador);
+         countEquipe = 0;
+         countJogador = 0;
+         equipe = listaEquipes.get(0).getNome();
+         jogador = listaEquipes.get(0).getListaJogador().get(0).getNome();
+         nomeEquipe.setText(equipe);
+         nomeJogador.setText(jogador);
+         nomeEquipe.setTextColor(Color.BLACK);
+         nomeJogador.setTextColor(Color.BLACK);
 
 
 
@@ -52,8 +74,11 @@ public class EquipeJoga extends AppCompatActivity {
                     public void onClick(View view) {
                         Intent changeScreen = new Intent(EquipeJoga.this, TimerActivity.class);
                         changeScreen.putExtra("todasPalavras", todasPalavras);
+                        changeScreen.putExtra("todasPalavrasClone", todasPalavrasClone);
                         changeScreen.putExtra("nomeEquipe", equipe);
+                        changeScreen.putExtra("fase", qualFase);
                         changeScreen.putExtra("nomeJogador", jogador);
+                        changeScreen.putExtra("listaEquipes", (Serializable) listaEquipes);
                         startActivityForResult(changeScreen, 1);
 
                     }
@@ -65,15 +90,24 @@ public class EquipeJoga extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        pontuacao = data.getIntExtra("pontuacao", 0);
+        int pontInicial = listaEquipes.get(countEquipe % listaEquipes.size()).getPontuacao();
+        listaEquipes.get(countEquipe % listaEquipes.size()).setPontuacao(pontuacao + pontInicial);
+        pontuacaoEquipes.clear(); // limpa a lista atual
+        populaListaPontuacao();
+        adapter.notifyDataSetChanged(); //atualiza a pontuação das equipes
+
+        qualFase = data.getIntExtra("fase", 0);
+        setaFaseTextView();
+
         countEquipe++;
         qtdPalavras++;
         todasPalavras = data.getStringArrayListExtra("SOBRANDO");
-        pontuacao = data.getIntExtra("pontuacao", 0);
-        int pontInicial = listaEquipes.get(countEquipe % listaEquipes.size()).getPontuacao();
 
-        listaEquipes.get(countEquipe % listaEquipes.size()).setPontuacao(pontuacao + pontInicial);
 
-            if(countEquipe % listaEquipes.size() == 0){
+        if(qualFase < 4) {
+            if (countEquipe % listaEquipes.size() == 0) {
                 countJogador++;
                 int size = listaEquipes.get(countEquipe % listaEquipes.size()).getListaJogador().size();
 
@@ -86,13 +120,19 @@ public class EquipeJoga extends AppCompatActivity {
                 nomeJogador.setText(jogador);
 
             } else {
-            int size = listaEquipes.get(countEquipe % listaEquipes.size()).getListaJogador().size();
+                int size = listaEquipes.get(countEquipe % listaEquipes.size()).getListaJogador().size();
 
-            equipe = listaEquipes.get(countEquipe % listaEquipes.size()).getNome();
-            jogador = listaEquipes.get(countEquipe % listaEquipes.size()).getListaJogador().get(countJogador % size).getNome();
+                equipe = listaEquipes.get(countEquipe % listaEquipes.size()).getNome();
+                jogador = listaEquipes.get(countEquipe % listaEquipes.size()).getListaJogador().get(countJogador % size).getNome();
 
-            nomeEquipe.setText(equipe);
-            nomeJogador.setText(jogador);
+                nomeEquipe.setText(equipe);
+                nomeJogador.setText(jogador);
+            }
+        } else {
+            Intent intent = new Intent(EquipeJoga.this, TelaFinal.class);
+            intent.putExtra("listaEquipes", (Serializable) listaEquipes);
+            //intent.putExtra("pontuacao", corretos);
+            startActivity(intent);
         }
 
         super.onActivityResult(requestCode, resultCode, data);
@@ -104,5 +144,22 @@ public class EquipeJoga extends AppCompatActivity {
             count += listaEquipes.get(i).getListaJogador().size();
         }
         return count;
+    }
+
+    public void populaListaPontuacao(){
+        for(int i = 0; i < listaEquipes.size(); i++){
+            String aux = listaEquipes.get(i).getNome() + " -- " + listaEquipes.get(i).getPontuacao() + " ponto(s)";
+            pontuacaoEquipes.add(aux);
+        }
+    }
+
+    public void setaFaseTextView(){
+        if(qualFase == 0){
+            fase.setText("DESCREVA A PALAVRA");
+        }else if(qualFase == 1){
+            fase.setText("DESCREVA A PALAVRA USANDO SOMENTE UMA PALAVRA");
+        } else if(qualFase == 2){
+            fase.setText("FAÇA UMA MÍMICA");
+        }
     }
 }

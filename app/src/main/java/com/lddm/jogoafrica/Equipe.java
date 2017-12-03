@@ -39,4 +39,6 @@ public class Equipe implements Serializable{
     public void setListaJogador(List<Jogador> listaJogador) {
         this.listaJogador = listaJogador;
     }
+
+
 }

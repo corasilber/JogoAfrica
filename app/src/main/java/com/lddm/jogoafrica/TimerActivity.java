@@ -7,10 +7,14 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.TextView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -23,10 +27,12 @@ public class TimerActivity extends AppCompatActivity {
     public static String NOME_EQUIPE = "EQUIPE";
     public static String NOME_JOGADOR = "JOGADOR";
 
-    private ArrayList<String> palavras;
-    private int corretos = -1;
+    private ArrayList<String> palavras, palavrasClone;
+    private int corretos = -1, fase;
     private Random random = new Random();
     private CountDownTimer timer;
+    private List<Equipe> listaEquipes;
+
 
     private TextView nomeJogador;
     private TextView nomeEquipe;
@@ -49,24 +55,18 @@ public class TimerActivity extends AppCompatActivity {
         palavraTextView = (TextView) findViewById(R.id.palavraTextView);
         contadorTextView = (TextView) findViewById(R.id.counterTextView);
 
-//        Intent intent = getIntent();
-//        if (intent != null) {
-//            palavras = intent.getStringArrayListExtra(PALAVRAS);
-//            nomeJogador.setText(intent.getStringExtra(NOME_JOGADOR));
-//            nomeEquipe.setText(intent.getStringExtra(NOME_EQUIPE));
-//        } else {
+        palavras =(ArrayList<String>) getIntent().getSerializableExtra("todasPalavras");
+        palavrasClone = (ArrayList<String>) getIntent().getSerializableExtra("todasPalavrasClone");
+        listaEquipes =  (List<Equipe>) getIntent().getSerializableExtra("listaEquipes");
 
-            palavras =(ArrayList<String>) getIntent().getSerializableExtra("todasPalavras");
-            String equipe = getIntent().getStringExtra("nomeEquipe");
-            String jogador = getIntent().getStringExtra("nomeJogador");
+        fase = getIntent().getIntExtra("fase", 0);
+        String equipe = getIntent().getStringExtra("nomeEquipe");
+        String jogador = getIntent().getStringExtra("nomeJogador");
 
-            //palavras = new ArrayList<String>();
-           // palavras.add("Bolacha");
-//            palavras.add("Figo");
-//            palavras.add("Moita");
-            nomeJogador.setText(jogador);
-            nomeEquipe.setText(equipe);
-//        }
+
+        nomeJogador.setText(jogador);
+        nomeEquipe.setText(equipe);
+
 
         mudarPalavra();
 
@@ -83,7 +83,7 @@ public class TimerActivity extends AppCompatActivity {
             }
         });
 
-        timer  = new CountDownTimer(1000, 1000) {
+        timer  = new CountDownTimer(5000, 1000) {
             @Override
             public void onTick(long l) {
                 countDownTextView.setText(Long.toString(l / 1000));
@@ -104,18 +104,22 @@ public class TimerActivity extends AppCompatActivity {
             palavraTextView.setText(palavras.remove(random.nextInt(palavras.size())));
             contadorTextView.setText((++corretos) + "");
         } else {
+            palavras = palavrasClone;
+            corretos++;
+            fase++;
             encerrarAtividade();
-
         }
     }
 
     private void encerrarAtividade() {
-        timer.cancel();
-        Intent intent = new Intent(TimerActivity.this, EquipeJoga.class);
-        intent.putStringArrayListExtra(PALAVRAS_SOBRANDO, palavras);
-        intent.putExtra("pontuacao", corretos);
-        setResult(RESULT_OK, intent);
-        finish();
+            timer.cancel();
+            Intent intent = new Intent(TimerActivity.this, EquipeJoga.class);
+            intent.putStringArrayListExtra(PALAVRAS_SOBRANDO, palavras);
+            intent.putExtra("pontuacao", corretos);
+            intent.putExtra("fase", fase);
+            setResult(RESULT_OK, intent);
+            finish();
+
     }
     @Override
     public void onResume() {
