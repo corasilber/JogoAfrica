@@ -1,6 +1,9 @@
 package com.lddm.jogoafrica;
 
+import android.content.Context;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
@@ -8,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created by augusto on 02/12/17.
@@ -15,15 +19,24 @@ import java.util.ArrayList;
 
 public class TimerActivity extends AppCompatActivity {
     public static String PALAVRAS = "WORDS";
+    public static String PALAVRAS_SOBRANDO = "SOBRANDO";
     public static String NOME_EQUIPE = "EQUIPE";
     public static String NOME_JOGADOR = "JOGADOR";
 
     private ArrayList<String> palavras;
+    private int corretos = -1;
+    private Random random = new Random();
+    private CountDownTimer timer;
+
     private TextView nomeJogador;
     private TextView nomeEquipe;
     private TextView palavraTextView;
     private TextView countDownTextView;
+    private TextView contadorTextView;
 
+    private SensorManager mSensorManager;
+    private Sensor mAccelerometer;
+    private ShakeDetector mShakeDetector;
 
 
     @Override
@@ -31,9 +44,10 @@ public class TimerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.timer_activity);
         countDownTextView = (TextView) findViewById(R.id.countDownText);
-        nomeJogador = (TextView) findViewById(R.id.countDownText);
-        nomeEquipe = (TextView) findViewById(R.id.countDownText);
-        palavraTextView = (TextView) findViewById(R.id.countDownText);
+        nomeJogador = (TextView) findViewById(R.id.jogadorTextView);
+        nomeEquipe = (TextView) findViewById(R.id.equipeTextView);
+        palavraTextView = (TextView) findViewById(R.id.palavraTextView);
+        contadorTextView = (TextView) findViewById(R.id.counterTextView);
 
 //        Intent intent = getIntent();
 //        if (intent != null) {
@@ -46,11 +60,25 @@ public class TimerActivity extends AppCompatActivity {
             palavras.add("Figo");
             palavras.add("Moita");
             nomeJogador.setText("Augusto");
-            nomeEquipe.setText("Afrimaster");
+            nomeEquipe.setText("Africators 2000");
 //        }
 
-        palavraTextView.setText("60");
-        new CountDownTimer(60000, 1000) {
+        mudarPalavra();
+
+        // ShakeDetector initialization
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mAccelerometer = mSensorManager
+                .getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mShakeDetector = new ShakeDetector();
+        mShakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
+
+            @Override
+            public void onShake(int count) {
+                mudarPalavra();
+            }
+        });
+
+        timer  = new CountDownTimer(60000, 1000) {
             @Override
             public void onTick(long l) {
                 countDownTextView.setText(Long.toString(l / 1000));
@@ -58,11 +86,44 @@ public class TimerActivity extends AppCompatActivity {
 
             @Override
             public void onFinish() {
-                countDownTextView.setText("done!");
+//                encerrarAtividade();
             }
-        }.start();
+        };
+        timer.start();
 
     }
+
+    private void mudarPalavra() {
+        if (!palavras.isEmpty()) {
+            palavraTextView.setText(palavras.remove(random.nextInt(palavras.size())));
+            contadorTextView.setText((++corretos) + "");
+        } else {
+            encerrarAtividade();
+
+        }
+    }
+
+    private void encerrarAtividade() {
+        timer.cancel();
+        Intent intent = new Intent();
+        intent.putStringArrayListExtra(PALAVRAS_SOBRANDO, palavras);
+        setResult(RESULT_OK, intent);
+        finish();
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Add the following line to register the Session Manager Listener onResume
+        mSensorManager.registerListener(mShakeDetector, mAccelerometer,	SensorManager.SENSOR_DELAY_UI);
+    }
+
+    @Override
+    public void onPause() {
+        // Add the following line to unregister the Sensor Manager onPause
+        mSensorManager.unregisterListener(mShakeDetector);
+        super.onPause();
+    }
+
 }
 
 
