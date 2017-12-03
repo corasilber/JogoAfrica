@@ -55,12 +55,17 @@ public class TimerActivity extends AppCompatActivity {
 //            nomeJogador.setText(intent.getStringExtra(NOME_JOGADOR));
 //            nomeEquipe.setText(intent.getStringExtra(NOME_EQUIPE));
 //        } else {
-            palavras = new ArrayList<String>();
-            palavras.add("Bolacha");
-            palavras.add("Figo");
-            palavras.add("Moita");
-            nomeJogador.setText("Augusto");
-            nomeEquipe.setText("Africators 2000");
+
+            palavras =(ArrayList<String>) getIntent().getSerializableExtra("todasPalavras");
+            String equipe = getIntent().getStringExtra("nomeEquipe");
+            String jogador = getIntent().getStringExtra("nomeJogador");
+
+            //palavras = new ArrayList<String>();
+           // palavras.add("Bolacha");
+//            palavras.add("Figo");
+//            palavras.add("Moita");
+            nomeJogador.setText(jogador);
+            nomeEquipe.setText(equipe);
 //        }
 
         mudarPalavra();
@@ -78,7 +83,7 @@ public class TimerActivity extends AppCompatActivity {
             }
         });
 
-        timer  = new CountDownTimer(60000, 1000) {
+        timer  = new CountDownTimer(1000, 1000) {
             @Override
             public void onTick(long l) {
                 countDownTextView.setText(Long.toString(l / 1000));
@@ -86,7 +91,8 @@ public class TimerActivity extends AppCompatActivity {
 
             @Override
             public void onFinish() {
-//                encerrarAtividade();
+                palavras.add(palavraTextView.getText().toString());
+               encerrarAtividade();
             }
         };
         timer.start();
@@ -105,8 +111,9 @@ public class TimerActivity extends AppCompatActivity {
 
     private void encerrarAtividade() {
         timer.cancel();
-        Intent intent = new Intent();
+        Intent intent = new Intent(TimerActivity.this, EquipeJoga.class);
         intent.putStringArrayListExtra(PALAVRAS_SOBRANDO, palavras);
+        intent.putExtra("pontuacao", corretos);
         setResult(RESULT_OK, intent);
         finish();
     }

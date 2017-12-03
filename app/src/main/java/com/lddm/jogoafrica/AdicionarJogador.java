@@ -33,7 +33,7 @@ public class AdicionarJogador extends AppCompatActivity {
        // listaEquipes =  getIntent().getStringArrayListExtra("nomeEquipes");
        listaEquipes = (ArrayList<String>) getIntent().getSerializableExtra("nomeEquipes");
        populaEquipe(listaEquipes);
-        todasPalavras = new ArrayList<>();
+       todasPalavras = new ArrayList<>();
 
         jogar = (Button) findViewById(R.id.jogarButton);
 
@@ -119,10 +119,10 @@ public class AdicionarJogador extends AppCompatActivity {
        jogar.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View view) {
-                adicionaJogadoresNaListaEquipe();
+               adicionaJogadoresNaListaEquipe();
                Intent changeScreen = new Intent(AdicionarJogador.this, TelaPreparacao.class);
-              changeScreen.putExtra("listaEquipes", (Serializable) equipe);
-               changeScreen.putExtra("todasPalavras", todasPalavras);
+                    changeScreen.putExtra("listaEquipes", (Serializable) equipe);
+                    changeScreen.putExtra("todasPalavras", todasPalavras);
                startActivity(changeScreen);
 
            }

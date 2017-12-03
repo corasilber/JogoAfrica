@@ -8,8 +8,21 @@ import java.util.List;
  */
 
 public class Equipe implements Serializable{
+
     private String nome;
     private List<Jogador> listaJogador;
+
+    private Integer pontuacao = 0;
+
+
+    public Integer getPontuacao() {
+        return pontuacao;
+    }
+
+    public void setPontuacao(Integer pontuacao) {
+        this.pontuacao = pontuacao;
+    }
+
 
     public String getNome() {
         return nome;

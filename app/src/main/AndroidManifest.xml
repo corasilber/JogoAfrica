@@ -18,8 +18,9 @@
         </activity>
         <activity android:name=".AdicionarJogador" />
         <activity android:name=".MontarEquipe" />
-        <activity android:name=".TelaPreparacao"/>
-        <activity android:name=".TimerActivity"/>
+        <activity android:name=".TelaPreparacao" />
+        <activity android:name=".TimerActivity" />
+        <activity android:name=".EquipeJoga"></activity>
     </application>
     <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true" />
 

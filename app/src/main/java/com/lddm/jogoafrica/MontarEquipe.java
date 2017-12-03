@@ -53,7 +53,7 @@ public class MontarEquipe extends AppCompatActivity {
         qtdPalavras.setAdapter(adapterPalavras);
         final String palavras = qtdPalavras.getSelectedItem().toString();
 
-       // if(count <= numEquipe) {
+        if(count <= numEquipe) {
 
             //aqui vai abrir um dialog para a pessoa digitar o nome da equipe
             inserirEquipe.setOnClickListener(new View.OnClickListener() {
@@ -88,7 +88,7 @@ public class MontarEquipe extends AppCompatActivity {
                     }); // fim setOnClick botão adicionar nome
                 }
             }); // fim setOnclick botão inserir equipe
-      //  } // inserir somente quantidade de equipes pre selecionadas
+        } // inserir somente quantidade de equipes pre selecionadas
 
 
         adicionar.setOnClickListener(new View.OnClickListener() {
