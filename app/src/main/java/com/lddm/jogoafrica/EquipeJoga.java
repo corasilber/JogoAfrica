@@ -110,7 +110,7 @@ public class EquipeJoga extends AppCompatActivity {
             handler.postDelayed(getNewWords, 1000);
         }
 
-        pontuacao = data.getIntExtra("pontuacao", 0);
+       // pontuacao = data.getIntExtra("pontuacao", 0);
         int pontInicial = listaEquipes.get(countEquipe % listaEquipes.size()).getPontuacao();
         listaEquipes.get(countEquipe % listaEquipes.size()).setPontuacao(pontuacao + pontInicial);
         pontuacaoEquipes.clear(); // limpa a lista atual
@@ -124,17 +124,16 @@ public class EquipeJoga extends AppCompatActivity {
         qtdPalavras++;
         todasPalavras = data.getStringArrayListExtra("SOBRANDO");
 
-
-
         if(qualFase < 4) {
+            //já rodou por todas equipes -> muda jogador
             if (countEquipe % listaEquipes.size() == 0) {
                 countJogador++;
                 int size = listaEquipes.get(countEquipe % listaEquipes.size()).getListaJogador().size();
 
                 equipe = listaEquipes.get(countEquipe % listaEquipes.size()).getNome();
-
-                jogador = listaEquipes.get(countEquipe % listaEquipes.size()).getListaJogador()
-                        .get(countJogador % size).getNome();
+                jogador = listaEquipes.get(countEquipe % listaEquipes.size())
+                                      .getListaJogador().get(countJogador % size)
+                                      .getNome();
 
                 nomeEquipe.setText(equipe);
                 nomeJogador.setText(jogador);
@@ -143,7 +142,10 @@ public class EquipeJoga extends AppCompatActivity {
                 int size = listaEquipes.get(countEquipe % listaEquipes.size()).getListaJogador().size();
 
                 equipe = listaEquipes.get(countEquipe % listaEquipes.size()).getNome();
-                jogador = listaEquipes.get(countEquipe % listaEquipes.size()).getListaJogador().get(countJogador % size).getNome();
+                jogador = listaEquipes.get(countEquipe % listaEquipes.size())
+                                      .getListaJogador()
+                                      .get(countJogador % size)
+                                      .getNome();
 
                 nomeEquipe.setText(equipe);
                 nomeJogador.setText(jogador);
@@ -151,11 +153,14 @@ public class EquipeJoga extends AppCompatActivity {
         } else {
             Intent intent = new Intent(EquipeJoga.this, TelaFinal.class);
             intent.putExtra("listaEquipes", (Serializable) listaEquipes);
-            //intent.putExtra("pontuacao", corretos);
             startActivity(intent);
         }
 
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public void activityResultServidor(ArrayList<String> palavras){
+
     }
 
     public int achaQtdJogador(){
@@ -195,6 +200,7 @@ public class EquipeJoga extends AppCompatActivity {
             changeScreen.putExtra("todasPalavrasClone", todasPalavrasClone);
             changeScreen.putExtra("nomeEquipe", equipe);
             changeScreen.putExtra("fase", qualFase);
+            changeScreen.putExtra("comecouJogo", comecouJogo);
             changeScreen.putExtra("nomeJogador", jogador);
             changeScreen.putExtra("listaEquipes", (Serializable) listaEquipes);
             changeScreen.putExtra("targetTime", timestamp);

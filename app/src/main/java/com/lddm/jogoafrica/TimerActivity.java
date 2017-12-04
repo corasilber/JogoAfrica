@@ -33,6 +33,7 @@ public class TimerActivity extends AppCompatActivity {
     private Random random = new Random();
     private CountDownTimer timer;
     private List<Equipe> listaEquipes;
+    private boolean comecouJogo;
 
 
     private TextView nomeJogador;
@@ -44,6 +45,7 @@ public class TimerActivity extends AppCompatActivity {
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
     private ShakeDetector mShakeDetector;
+
 
 
     @Override
@@ -59,6 +61,7 @@ public class TimerActivity extends AppCompatActivity {
         palavras =(ArrayList<String>) getIntent().getSerializableExtra("todasPalavras");
         palavrasClone = (ArrayList<String>) getIntent().getSerializableExtra("todasPalavrasClone");
         listaEquipes =  (List<Equipe>) getIntent().getSerializableExtra("listaEquipes");
+        comecouJogo = getIntent().getBooleanExtra("comecouJogo", false);
 
         fase = getIntent().getIntExtra("fase", 0);
         String equipe = getIntent().getStringExtra("nomeEquipe");
@@ -103,11 +106,13 @@ public class TimerActivity extends AppCompatActivity {
     }
 
     private void mudarPalavra() {
-        if (!palavras.isEmpty()) {
+        if (!palavras.isEmpty() ) {
             Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             vibrator.vibrate(500);
-            palavraTextView.setText(palavras.remove(random.nextInt(palavras.size())));
-            contadorTextView.setText((++corretos) + "");
+            if(!comecouJogo) {
+                palavraTextView.setText(palavras.remove(random.nextInt(palavras.size())));
+                contadorTextView.setText((++corretos) + "");
+            }
         } else {
             corretos++;
             fase++;
