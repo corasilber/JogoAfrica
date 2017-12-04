@@ -2,6 +2,8 @@
 from flask import Flask, jsonify, request, abort
 from random import randrange
 from json import dumps, loads
+from time import time
+from datetime import timedelta
 
 app = Flask(__name__)
 
@@ -44,7 +46,8 @@ def send_teams():
 def get_teams(session):
 	if session not in sessions:
 		abort(400)
-	return dumps(sessions[session].nome_equipes)
+	print(sessions[session])
+	return dumps(sessions[session].__dict__)
 	
 @app.route('/send_team_members/<int:session>', methods=['POST'])
 def send_team_members(session):
@@ -64,7 +67,7 @@ def send_team_members(session):
 def get_team_members(session):
 	if session not in sessions:
 		abort(400)
-	if sum([len(j) for j in sessions[session].equipes.values()]) >= len(sessions[session].nome_equipes) * sessions[session].num_jogadores:
+	if len(sessions[session].nome_equipes) * sessions[session].num_jogadores * 3 <= len(sessions[session].words):
 		return dumps(sessions[session].__dict__), 201
 	else:
 		return "", 200
@@ -94,17 +97,24 @@ def is_words_complete(session):
 	num_jogadores = sum([len(j) for _, j in sessions[session].nome_equipes])
 	return str(len(sessions[session].words) >= num_jogadores * 3), 200	
 
-@app.route('/start_timer/<int:session>', methods=['POST'])
+@app.route('/start_timer/<int:session>', methods=['GET'])
 def start_timer(session):
-	if not request.json or session not in sessions:
+	if session not in sessions:
 		abort(400)
 
 	if sessions[session].timestamp == 0:
-		sessions[session].timestamp = int(request.get_json()['timestamp'])
-		print(sessions[session].timestamp)
-		return "", 201
+		sessions[session].timestamp = int(round(time() * 1000))
+	return str(sessions[session].timestamp).split('.')[0], 200
+
+@app.route('/get_timer/<int:session>', methods=['GET'])
+def get_timer(session):
+	if session not in sessions:
+		abort(400)
+
+	if sessions[session].timestamp == 0:
+		return '0', 200
 	else:
-		return str(sessions[session].timestamp), 200
+		return str(int(round(time() * 1000)) - sessions[session].timestamp).split('.')[0], 200
 
 @app.route('/stop_timer/<int:session>', methods=['POST'])
 def stop_timer(session):

@@ -38,7 +38,6 @@ public class AdicionarJogador extends AppCompatActivity implements GetTeams {
        listaEquipes = (ArrayList<String>) getIntent().getSerializableExtra("nomeEquipes");
        populaEquipe(listaEquipes);
        todasPalavras = new ArrayList<>();
-
         jogar = (Button) findViewById(R.id.jogarButton);
 
         runnable = new Runnable() {
@@ -186,6 +185,7 @@ public class AdicionarJogador extends AppCompatActivity implements GetTeams {
             Equipe e = new Equipe();
             e.setNome(key);
             e.setListaJogador(jogadoresAtuais);
+            equipe.add(e);
         }
 
 

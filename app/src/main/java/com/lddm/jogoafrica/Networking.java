@@ -24,12 +24,6 @@ import java.util.Map;
  * Created by augusto on 03/12/17.
  */
 
-interface TeamAPI {
-    void setSession(int session);
-    void getTeams(ArrayList<String> equipes);
-
-}
-
 interface GetTeams {
     void getTeammates(EquipeJson equipeJson);
 //    void areWordsComplete(boolean isComplete);
@@ -37,10 +31,10 @@ interface GetTeams {
 }
 
 public class Networking {
-    private static String endpoint = "http://10.0.2.2:5000/";
-//    private static String endpoint = "http://augusto2112.pythonanywhere.com/";
+//    private static String endpoint = "http://10.0.2.2:5000/";
+    private static String endpoint = "http://augusto2112.pythonanywhere.com/";
 
-    public static void createSession(final TeamAPI c) {
+    public static void createSession(final MainActivity c) {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
@@ -96,14 +90,13 @@ public class Networking {
         });
     }
 
-    public static void buscarEquipes(final TeamAPI c, final int session) {
+    public static void buscarEquipes(final MainActivity c, final int session) {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
                 try {
                     URL endpointURL = new URL(endpoint + "get_teams/" + session);
                     HttpURLConnection con = (HttpURLConnection) endpointURL.openConnection();
-                    int i = con.getResponseCode();
                     if (con.getResponseCode() == 200) {
                         InputStream responseBody = con.getInputStream();
                         BufferedReader r = new BufferedReader(new InputStreamReader(responseBody));
@@ -112,15 +105,17 @@ public class Networking {
                         while( (line = r.readLine()) != null) {
                             everything.append(line);
                         }
-                        String[] teams = new Gson().fromJson(everything.toString(), String[].class);
-                        ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(teams));
+
+                        final EquipeJson gameObject = new Gson().fromJson(everything.toString(), EquipeJson.class);
+                        final ArrayList<String> arrayList = gameObject.nome_equipes;
+                        final int numJogadores = gameObject.num_jogadores;
 
                         Handler mainHandler = new Handler(((AppCompatActivity) c).getMainLooper());
                         final ArrayList<String> finalArrayList = arrayList;
                         mainHandler.post(new Runnable() {
                             @Override
                             public void run() {
-                                c.getTeams(finalArrayList);
+                                c.getTeams(finalArrayList, numJogadores);
                             }
                         });
                     }
@@ -194,6 +189,64 @@ public class Networking {
                 }
             }
         });
+    }
+
+    public static void startTimer(final EquipeJoga tp, final int session) {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    URL endpointURL = new URL(endpoint + "start_timer/" + session);
+                    HttpURLConnection con = (HttpURLConnection) endpointURL.openConnection();
+                    con.setRequestMethod("GET");
+                    if (con.getResponseCode() == 200) {
+//                        InputStream responseBody = con.getInputStream();
+//                        BufferedReader r = new BufferedReader(new InputStreamReader(responseBody));
+//                        final String timestamp = r.readLine();
+//                        Handler mainHandler = new Handler(((AppCompatActivity) tp).getMainLooper());
+//                        mainHandler.post(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                tp.startGame(Long.parseLong(timestamp));
+//                            }
+//                        });
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+    }
+
+    public static void getTimer(final EquipeJoga tp, final int session) {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    URL endpointURL = new URL(endpoint + "get_timer/" + session);
+                    HttpURLConnection con = (HttpURLConnection) endpointURL.openConnection();
+                    con.setRequestMethod("GET");
+                    if (con.getResponseCode() == 200) {
+                        InputStream responseBody = con.getInputStream();
+                        BufferedReader r = new BufferedReader(new InputStreamReader(responseBody));
+                        final long timestamp = Long.parseLong(r.readLine());
+                        final long adjestedTimestamp = timestamp != 0 ? 60 * 1000 - timestamp : 0;
+                        Handler mainHandler = new Handler(((AppCompatActivity) tp).getMainLooper());
+                        mainHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                tp.startGame(adjestedTimestamp);
+                            }
+                        });
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+
     }
 
 }

@@ -62,7 +62,7 @@ public class TimerActivity extends AppCompatActivity {
         fase = getIntent().getIntExtra("fase", 0);
         String equipe = getIntent().getStringExtra("nomeEquipe");
         String jogador = getIntent().getStringExtra("nomeJogador");
-
+        long timestamp = getIntent().getLongExtra("targetTime", 0);
 
         nomeJogador.setText(jogador);
         nomeEquipe.setText(equipe);
@@ -83,7 +83,7 @@ public class TimerActivity extends AppCompatActivity {
             }
         });
 
-        timer  = new CountDownTimer(5000, 1000) {
+        timer  = new CountDownTimer(timestamp, 100) {
             @Override
             public void onTick(long l) {
                 countDownTextView.setText(Long.toString(l / 1000));

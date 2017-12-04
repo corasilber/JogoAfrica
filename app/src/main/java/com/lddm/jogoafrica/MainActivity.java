@@ -13,7 +13,7 @@ import android.widget.EditText;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements TeamAPI {
+public class MainActivity extends AppCompatActivity  {
 
     Button button;
     Button button4;
@@ -74,7 +74,6 @@ public class MainActivity extends AppCompatActivity implements TeamAPI {
 
     }
 
-    @Override
     public void setSession(int session) {
         MainActivity.session = session;
         AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
@@ -91,12 +90,14 @@ public class MainActivity extends AppCompatActivity implements TeamAPI {
         alertDialog.show();
     }
 
-    @Override
-    public void getTeams(ArrayList<String> equipes) {
+
+    public void getTeams(ArrayList<String> equipes, int numJogadores) {
         if (!equipes.isEmpty()) {
             handler.removeCallbacks(runnable);
             Intent changeScreen = new Intent(MainActivity.this, AdicionarJogador.class);
             changeScreen.putExtra("nomeEquipes", equipes);
+            changeScreen.putExtra("qtdJogador", "" +numJogadores);
+
             startActivity(changeScreen);
         }
     }

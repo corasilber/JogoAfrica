@@ -2,6 +2,7 @@ package com.lddm.jogoafrica;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -27,6 +28,8 @@ public class EquipeJoga extends AppCompatActivity {
     String equipe, jogador;
     ListView listaPontuacao;
     ArrayAdapter<String> adapter;
+    private Handler handler = new Handler();
+    private Runnable runnable;
 
 
 
@@ -69,23 +72,23 @@ public class EquipeJoga extends AppCompatActivity {
 
 
 
-                jogar.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent changeScreen = new Intent(EquipeJoga.this, TimerActivity.class);
-                        changeScreen.putExtra("todasPalavras", todasPalavras);
-                        changeScreen.putExtra("todasPalavrasClone", todasPalavrasClone);
-                        changeScreen.putExtra("nomeEquipe", equipe);
-                        changeScreen.putExtra("fase", qualFase);
-                        changeScreen.putExtra("nomeJogador", jogador);
-                        changeScreen.putExtra("listaEquipes", (Serializable) listaEquipes);
-                        startActivityForResult(changeScreen, 1);
+        jogar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            Networking.startTimer(EquipeJoga.this, MainActivity.session);
+            }
+        });
 
-                    }
-                });
-
-
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                Networking.getTimer(EquipeJoga.this, MainActivity.session);
+                handler.postDelayed(this, 3000);
+            }
+        };
+        handler.postDelayed(runnable, 3000);
        }
+
 
 
     @Override
@@ -162,4 +165,20 @@ public class EquipeJoga extends AppCompatActivity {
             fase.setText("FAÇA UMA MÍMICA");
         }
     }
+
+    public void startGame(long timestamp) {
+        if (timestamp > 0) {
+            handler.removeCallbacks(runnable);
+            Intent changeScreen = new Intent(EquipeJoga.this, TimerActivity.class);
+            changeScreen.putExtra("todasPalavras", todasPalavras);
+            changeScreen.putExtra("todasPalavrasClone", todasPalavrasClone);
+            changeScreen.putExtra("nomeEquipe", equipe);
+            changeScreen.putExtra("fase", qualFase);
+            changeScreen.putExtra("nomeJogador", jogador);
+            changeScreen.putExtra("listaEquipes", (Serializable) listaEquipes);
+            changeScreen.putExtra("targetTime", timestamp);
+            startActivityForResult(changeScreen, 1);
+        }
+    }
+
 }
