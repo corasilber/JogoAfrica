@@ -15,8 +15,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity  {
 
-    Button button;
-    Button button4;
+    Button button, conectar, palavras;
     public static int session;
     private Handler handler = new Handler();
     private Runnable runnable;
@@ -26,7 +25,8 @@ public class MainActivity extends AppCompatActivity  {
         setContentView(R.layout.activity_main);
 
         button = (Button) findViewById(R.id.button);
-        button4 = (Button) findViewById(R.id.button4);
+        conectar = (Button) findViewById(R.id.conectar);
+        palavras = (Button) findViewById(R.id.palavras);
 
          runnable = new Runnable() {
             @Override
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity  {
             }
         });
 
-        button4.setOnClickListener(new View.OnClickListener() {
+        conectar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -69,6 +69,14 @@ public class MainActivity extends AppCompatActivity  {
                     }
                 });
                 builder.show();
+            }
+        });
+
+        palavras.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent changeScreen = new Intent(MainActivity.this, BancoPalavras.class);
+                startActivity(changeScreen);
             }
         });
 

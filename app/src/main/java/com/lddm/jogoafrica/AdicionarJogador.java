@@ -1,6 +1,8 @@
 package com.lddm.jogoafrica;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +12,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import com.lddm.jogoafrica.data.JogoContract;
+import com.lddm.jogoafrica.data.JogoDbHelper;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -105,6 +110,9 @@ public class AdicionarJogador extends AppCompatActivity implements GetTeams {
                                     todasPalavras.add(palavraUm);
                                     todasPalavras.add(palavraDois);
                                     todasPalavras.add(palavraTres);
+                                    adicionaSQL(palavraUm);
+                                    adicionaSQL(palavraDois);
+                                    adicionaSQL(palavraTres);
 
                                     String[] array = {palavraUm, palavraDois, palavraTres};
                                     jog.setPalavras(array);
@@ -194,5 +202,16 @@ public class AdicionarJogador extends AppCompatActivity implements GetTeams {
         changeScreen.putExtra("todasPalavras", gameState.words);
         startActivity(changeScreen);
 
+    }
+
+    public void adicionaSQL(String palavra){
+
+        final JogoDbHelper mDbHelper = new JogoDbHelper(this);
+
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(JogoContract.PalavrasEntry.COLUMN_PALAVRA_NAME, palavra);
+
+        db.insert(JogoContract.PalavrasEntry.TABLE_NAME, null , values);
     }
 }
