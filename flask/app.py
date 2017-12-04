@@ -121,6 +121,7 @@ def get_timer(session):
 
 @app.route('/stop_timer/<int:session>', methods=['POST'])
 def stop_timer(session):
+	print(session in sessions)
 	if not request.json or session not in sessions:
 		abort(400)
 
@@ -134,6 +135,8 @@ def stop_timer(session):
 def get_game_state(session):
 	if session not in sessions:
 		abort(400)
+	return dumps(sessions[session].__dict__)
+ 
 
 	return dumps(sessions[session].__dict__), 200
 if __name__ == '__main__':

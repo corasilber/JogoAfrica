@@ -50,7 +50,7 @@ class GameState {
     public int num_jogadores;
     public int connected;
     public ArrayList<String> words;
-    public int timestamp;
+    public long timestamp;
     public ArrayList<String> nome_equipes;
     public HashMap<String, List<String>> equipes;
     public int words_version;

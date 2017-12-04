@@ -8,16 +8,13 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextClock;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EquipeJoga extends AppCompatActivity {
+public class EquipeJoga extends AppCompatActivity implements GameStateInterface{
 
     List<Equipe> listaEquipes;
     ArrayList<String> todasPalavras, todasPalavrasClone, pontuacaoEquipes;
@@ -30,6 +27,13 @@ public class EquipeJoga extends AppCompatActivity {
     private Handler handler = new Handler();
     private Runnable runnable;
     private Runnable getNewWords;
+    private Runnable gameStateRunnable = new Runnable() {
+        @Override
+        public void run() {
+            Networking.getGameState(EquipeJoga.this, MainActivity.session);
+            handler.postDelayed(this, 1000);
+        }
+    };
     private boolean comecouJogo = false;
     private int versaoPalavras = 0;
 
@@ -101,28 +105,37 @@ public class EquipeJoga extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
         if (comecouJogo) {
-            Networking.stopTimer(this, MainActivity.session, todasPalavras);
+            Networking.stopTimer(this, MainActivity.session, data.getStringArrayListExtra("SOBRANDO"));
             comecouJogo = false;
-            listenToServer();
+            versaoPalavras++;
+
+            activityResultServidor(data.getStringArrayListExtra("SOBRANDO"));
         } else {
-            handler.postDelayed(getNewWords, 1000);
+            handler.postDelayed(gameStateRunnable, 500);
+            handler.postDelayed(getNewWords, 500);
         }
 
-       // pontuacao = data.getIntExtra("pontuacao", 0);
+        qualFase = data.getIntExtra("fase", 0);
+
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public void activityResultServidor(ArrayList<String> palavras){
+        // pontuacao = data.getIntExtra("pontuacao", 0);
+        pontuacao = todasPalavras.size() - palavras.size();
+        todasPalavras = palavras;
         int pontInicial = listaEquipes.get(countEquipe % listaEquipes.size()).getPontuacao();
         listaEquipes.get(countEquipe % listaEquipes.size()).setPontuacao(pontuacao + pontInicial);
         pontuacaoEquipes.clear(); // limpa a lista atual
         populaListaPontuacao();
         adapter.notifyDataSetChanged(); //atualiza a pontuação das equipes
 
-        qualFase = data.getIntExtra("fase", 0);
         setaFaseTextView();
 
         countEquipe++;
         qtdPalavras++;
-        todasPalavras = data.getStringArrayListExtra("SOBRANDO");
 
         if(qualFase < 4) {
             //já rodou por todas equipes -> muda jogador
@@ -132,8 +145,8 @@ public class EquipeJoga extends AppCompatActivity {
 
                 equipe = listaEquipes.get(countEquipe % listaEquipes.size()).getNome();
                 jogador = listaEquipes.get(countEquipe % listaEquipes.size())
-                                      .getListaJogador().get(countJogador % size)
-                                      .getNome();
+                        .getListaJogador().get(countJogador % size)
+                        .getNome();
 
                 nomeEquipe.setText(equipe);
                 nomeJogador.setText(jogador);
@@ -143,23 +156,19 @@ public class EquipeJoga extends AppCompatActivity {
 
                 equipe = listaEquipes.get(countEquipe % listaEquipes.size()).getNome();
                 jogador = listaEquipes.get(countEquipe % listaEquipes.size())
-                                      .getListaJogador()
-                                      .get(countJogador % size)
-                                      .getNome();
+                        .getListaJogador()
+                        .get(countJogador % size)
+                        .getNome();
 
                 nomeEquipe.setText(equipe);
                 nomeJogador.setText(jogador);
             }
+            listenToServer();
         } else {
             Intent intent = new Intent(EquipeJoga.this, TelaFinal.class);
             intent.putExtra("listaEquipes", (Serializable) listaEquipes);
             startActivity(intent);
         }
-
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    public void activityResultServidor(ArrayList<String> palavras){
 
     }
 
@@ -195,6 +204,7 @@ public class EquipeJoga extends AppCompatActivity {
     public void startGame(long timestamp) {
         if (timestamp > 0) {
             handler.removeCallbacks(runnable);
+            handler.removeCallbacks(getNewWords);
             Intent changeScreen = new Intent(EquipeJoga.this, TimerActivity.class);
             changeScreen.putExtra("todasPalavras", todasPalavras);
             changeScreen.putExtra("todasPalavrasClone", todasPalavrasClone);
@@ -204,22 +214,22 @@ public class EquipeJoga extends AppCompatActivity {
             changeScreen.putExtra("nomeJogador", jogador);
             changeScreen.putExtra("listaEquipes", (Serializable) listaEquipes);
             changeScreen.putExtra("targetTime", timestamp);
+            changeScreen.putExtra("versaoPalavras", versaoPalavras);
             startActivityForResult(changeScreen, 1);
         }
     }
 
     public void getGameState(GameState gameState) {
         if (gameState.words_version > versaoPalavras) {
-            handler.removeCallbacks(getNewWords);
+            handler.removeCallbacks(gameStateRunnable);
             versaoPalavras = gameState.words_version;
             todasPalavras = gameState.words;
-            listenToServer();
+            activityResultServidor(gameState.words);
         }
     }
 
     private void listenToServer() {
         handler.postDelayed(runnable, 1000);
-
     }
 
 }

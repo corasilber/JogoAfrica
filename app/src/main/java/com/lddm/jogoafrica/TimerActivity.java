@@ -6,6 +6,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -22,7 +23,7 @@ import java.util.Random;
  * Created by augusto on 02/12/17.
  */
 
-public class TimerActivity extends AppCompatActivity {
+public class TimerActivity extends AppCompatActivity implements GameStateInterface {
     public static String PALAVRAS = "WORDS";
     public static String PALAVRAS_SOBRANDO = "SOBRANDO";
     public static String NOME_EQUIPE = "EQUIPE";
@@ -34,7 +35,7 @@ public class TimerActivity extends AppCompatActivity {
     private CountDownTimer timer;
     private List<Equipe> listaEquipes;
     private boolean comecouJogo;
-
+    private int versaoPalavras;
 
     private TextView nomeJogador;
     private TextView nomeEquipe;
@@ -46,6 +47,14 @@ public class TimerActivity extends AppCompatActivity {
     private Sensor mAccelerometer;
     private ShakeDetector mShakeDetector;
 
+    private Handler handler = new Handler();
+    private Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            Networking.getGameState(TimerActivity.this, MainActivity.session);
+            handler.postDelayed(this, 1000);
+        }
+    };
 
 
     @Override
@@ -67,7 +76,7 @@ public class TimerActivity extends AppCompatActivity {
         String equipe = getIntent().getStringExtra("nomeEquipe");
         String jogador = getIntent().getStringExtra("nomeJogador");
         long timestamp = getIntent().getLongExtra("targetTime", 0);
-
+        versaoPalavras = getIntent().getIntExtra("versaoPalavras", 0);
         nomeJogador.setText(jogador);
         nomeEquipe.setText(equipe);
 
@@ -102,21 +111,21 @@ public class TimerActivity extends AppCompatActivity {
             }
         };
         timer.start();
-
+        if (!comecouJogo)
+            handler.postDelayed(runnable, 1000);
     }
 
     private void mudarPalavra() {
         if (!palavras.isEmpty() ) {
             Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             vibrator.vibrate(500);
-            if(!comecouJogo) {
+            if(comecouJogo) {
                 palavraTextView.setText(palavras.remove(random.nextInt(palavras.size())));
                 contadorTextView.setText((++corretos) + "");
             }
         } else {
             corretos++;
             fase++;
-            palavras = palavrasClone;
             encerrarAtividade();
 
         }
@@ -124,6 +133,7 @@ public class TimerActivity extends AppCompatActivity {
 
     private void encerrarAtividade() {
             timer.cancel();
+            handler.removeCallbacks(runnable);
             Intent intent = new Intent(TimerActivity.this, EquipeJoga.class);
             intent.putStringArrayListExtra(PALAVRAS_SOBRANDO, palavras);
             intent.putExtra("pontuacao", corretos);
@@ -144,6 +154,12 @@ public class TimerActivity extends AppCompatActivity {
         // Add the following line to unregister the Sensor Manager onPause
         mSensorManager.unregisterListener(mShakeDetector);
         super.onPause();
+    }
+
+    public void getGameState(GameState gameState) {
+        if (gameState.words_version > versaoPalavras) {
+            encerrarAtividade();
+        }
     }
 
 }

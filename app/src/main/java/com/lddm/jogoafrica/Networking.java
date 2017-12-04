@@ -25,6 +25,10 @@ interface GetTeams {
 //    void startTimer(int response, int timestamp);
 }
 
+interface GameStateInterface {
+    void getGameState(GameState gameState);
+}
+
 public class Networking {
     private static String endpoint = "http://10.0.2.2:5000/";
 //    private static String endpoint = "http://augusto2112.pythonanywhere.com/";
@@ -253,11 +257,14 @@ public class Networking {
                     HttpURLConnection con = (HttpURLConnection) endpointURL.openConnection();
                     con.setRequestMethod("POST");
                     con.setRequestProperty("Content-Type", "application/json");
-                    String data = new Gson().toJson(palavras);
+                    String data = new Gson().toJson(!palavras.isEmpty() ? palavras : "[]");
                     con.setDoOutput(true);
                     con.getOutputStream().write(data.getBytes());
 
                     if (con.getResponseCode() == 201) {
+                        InputStream responseBody = con.getInputStream();
+                        BufferedReader r = new BufferedReader(new InputStreamReader(responseBody));
+
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -267,7 +274,7 @@ public class Networking {
         });
     }
 
-    public static void getGameState(final EquipeJoga equipeJoga, final int session) {
+    public static void getGameState(final GameStateInterface equipeJoga, final int session) {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
