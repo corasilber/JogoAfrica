@@ -6,6 +6,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -91,6 +92,8 @@ public class TimerActivity extends AppCompatActivity {
 
             @Override
             public void onFinish() {
+                Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                vibrator.vibrate(3000);
                 palavras.add(palavraTextView.getText().toString());
                encerrarAtividade();
             }
@@ -101,6 +104,8 @@ public class TimerActivity extends AppCompatActivity {
 
     private void mudarPalavra() {
         if (!palavras.isEmpty()) {
+            Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            vibrator.vibrate(500);
             palavraTextView.setText(palavras.remove(random.nextInt(palavras.size())));
             contadorTextView.setText((++corretos) + "");
         } else {

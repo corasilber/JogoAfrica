@@ -31,7 +31,7 @@ interface GetTeams {
 }
 
 public class Networking {
-//    private static String endpoint = "http://10.0.2.2:5000/";
+  //  private static String endpoint = "http://10.0.2.2:5000/";
     private static String endpoint = "http://augusto2112.pythonanywhere.com/";
 
     public static void createSession(final MainActivity c) {

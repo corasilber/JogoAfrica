@@ -17,8 +17,8 @@
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginLeft="8dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintHorizontal_bias="0.643"
-        android:layout_marginTop="62dp"
+        app:layout_constraintHorizontal_bias="0.574"
+        android:layout_marginTop="33dp"
         app:layout_constraintTop_toBottomOf="@+id/fase" />
 
     <TextView
@@ -28,6 +28,7 @@
         android:text="equipeX"
         android:textSize="22dp"
         android:textStyle="italic"
+        android:textColor="@color/colorNames"
         android:gravity="center"
         android:layout_marginTop="0dp"
         app:layout_constraintTop_toBottomOf="@+id/textView12"
@@ -38,8 +39,8 @@
 
     <TextView
         android:id="@+id/textView14"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="244dp"
+        android:layout_height="31dp"
         android:text="Vez do(a) jogador(a):"
         android:textSize="23dp"
         android:layout_marginLeft="8dp"
@@ -47,7 +48,9 @@
         android:layout_marginRight="8dp"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginTop="32dp"
-        app:layout_constraintTop_toBottomOf="@+id/nomeEquipe" />
+        app:layout_constraintTop_toBottomOf="@+id/nomeEquipe"
+        tools:layout_editor_absoluteY="317dp"
+        tools:layout_editor_absoluteX="44dp" />
 
     <TextView
         android:id="@+id/jogador"
@@ -55,6 +58,7 @@
         android:layout_height="33dp"
         android:text="jogadorY"
         android:textSize="23dp"
+        android:textColor="@color/colorNames"
         android:gravity="center"
         android:textStyle="italic"
         android:layout_marginTop="11dp"
@@ -70,16 +74,16 @@
         android:layout_height="wrap_content"
         android:text="Ready...Go!"
         android:textSize="21dp"
-        android:layout_marginTop="55dp"
-        app:layout_constraintTop_toBottomOf="@+id/jogador"
         android:layout_marginLeft="8dp"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginRight="8dp"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintHorizontal_bias="0.502"
-        app:layout_constraintVertical_bias="1.0" />
+        android:layout_marginBottom="30dp"
+        app:layout_constraintHorizontal_bias="0.477"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/jogador"
+        app:layout_constraintVertical_bias="0.931" />
 
     <TextView
         android:id="@+id/textView13"
@@ -111,6 +115,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="FASEXYZ"
+        android:textColor="@color/colorRed"
         android:textSize="28dp"
         android:gravity="center"
         android:textStyle="bold"

@@ -1,7 +1,6 @@
 package com.lddm.jogoafrica;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -67,8 +66,6 @@ public class EquipeJoga extends AppCompatActivity {
          jogador = listaEquipes.get(0).getListaJogador().get(0).getNome();
          nomeEquipe.setText(equipe);
          nomeJogador.setText(jogador);
-         nomeEquipe.setTextColor(Color.BLACK);
-         nomeJogador.setTextColor(Color.BLACK);
 
 
 

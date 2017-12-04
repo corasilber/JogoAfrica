@@ -65,8 +65,8 @@
 
     <TextView
         android:id="@+id/textView4"
-        android:layout_width="216dp"
-        android:layout_height="18dp"
+        android:layout_width="214dp"
+        android:layout_height="25dp"
         android:text="Insira o nome das equipes"
         android:textSize="17dp"
         android:layout_marginRight="8dp"
