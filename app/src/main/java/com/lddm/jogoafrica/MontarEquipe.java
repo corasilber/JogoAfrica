@@ -102,8 +102,7 @@ public class MontarEquipe extends AppCompatActivity {
                 String qtdJogador = numJogador.getSelectedItem().toString();
                 changeScreen.putExtra("nomeEquipes", equipes);
 //                changeScreen.putExtra("qtdPalavras", palavras);
-//                changeScreen.putExtra("qtdJogador", qtdJogador);
-                    changeScreen.putExtra("qtdJogador", qtdJogador);
+                changeScreen.putExtra("qtdJogador", qtdJogador);
                 startActivity(changeScreen);
             }
         });

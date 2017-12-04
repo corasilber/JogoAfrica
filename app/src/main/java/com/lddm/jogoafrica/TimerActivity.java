@@ -109,10 +109,11 @@ public class TimerActivity extends AppCompatActivity {
             palavraTextView.setText(palavras.remove(random.nextInt(palavras.size())));
             contadorTextView.setText((++corretos) + "");
         } else {
-            palavras = palavrasClone;
             corretos++;
             fase++;
+            palavras = palavrasClone;
             encerrarAtividade();
+
         }
     }
 

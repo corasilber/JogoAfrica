@@ -39,7 +39,7 @@ public class EquipeJoga extends AppCompatActivity {
 
         listaEquipes = (List<Equipe>) getIntent().getSerializableExtra("listaEquipes");
         todasPalavras = (ArrayList<String>) getIntent().getSerializableExtra("todasPalavras");
-        todasPalavrasClone = (ArrayList<String>) getIntent().getSerializableExtra("todasPalavras");
+        todasPalavrasClone = (ArrayList<String>) ((ArrayList<String>) getIntent().getSerializableExtra("todasPalavras")).clone();
 
         nomeEquipe = (TextView) findViewById(R.id.nomeEquipe);
         nomeJogador = (TextView) findViewById (R.id.jogador);
