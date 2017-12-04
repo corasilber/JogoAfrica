@@ -5,34 +5,29 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by augusto on 03/12/17.
  */
 
 interface GetTeams {
-    void getTeammates(EquipeJson equipeJson);
+    void getTeammates(GameState gameState);
 //    void areWordsComplete(boolean isComplete);
 //    void startTimer(int response, int timestamp);
 }
 
 public class Networking {
-  //  private static String endpoint = "http://10.0.2.2:5000/";
-    private static String endpoint = "http://augusto2112.pythonanywhere.com/";
+    private static String endpoint = "http://10.0.2.2:5000/";
+//    private static String endpoint = "http://augusto2112.pythonanywhere.com/";
 
     public static void createSession(final MainActivity c) {
         AsyncTask.execute(new Runnable() {
@@ -106,7 +101,7 @@ public class Networking {
                             everything.append(line);
                         }
 
-                        final EquipeJson gameObject = new Gson().fromJson(everything.toString(), EquipeJson.class);
+                        final GameState gameObject = new Gson().fromJson(everything.toString(), GameState.class);
                         final ArrayList<String> arrayList = gameObject.nome_equipes;
                         final int numJogadores = gameObject.num_jogadores;
 
@@ -171,7 +166,7 @@ public class Networking {
                         while( (line = r.readLine()) != null) {
                             everything.append(line);
                         }
-                        final EquipeJson teams = new Gson().fromJson(everything.toString(), EquipeJson.class);
+                        final GameState teams = new Gson().fromJson(everything.toString(), GameState.class);
 
 
                         Handler mainHandler = new Handler(((AppCompatActivity) c).getMainLooper());
@@ -200,16 +195,17 @@ public class Networking {
                     HttpURLConnection con = (HttpURLConnection) endpointURL.openConnection();
                     con.setRequestMethod("GET");
                     if (con.getResponseCode() == 200) {
-//                        InputStream responseBody = con.getInputStream();
-//                        BufferedReader r = new BufferedReader(new InputStreamReader(responseBody));
-//                        final String timestamp = r.readLine();
-//                        Handler mainHandler = new Handler(((AppCompatActivity) tp).getMainLooper());
-//                        mainHandler.post(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                tp.startGame(Long.parseLong(timestamp));
-//                            }
-//                        });
+                        InputStream responseBody = con.getInputStream();
+                        BufferedReader r = new BufferedReader(new InputStreamReader(responseBody));
+                        final String timestamp = r.readLine();
+                        final boolean started = timestamp.equals("true");
+                        Handler mainHandler = new Handler(((AppCompatActivity) tp).getMainLooper());
+                        mainHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                tp.didStartGame(started);
+                            }
+                        });
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -246,7 +242,65 @@ public class Networking {
 
             }
         });
-
     }
+
+    public static void stopTimer(final EquipeJoga tp, final int session, final ArrayList<String> palavras) {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    URL endpointURL = new URL(endpoint + "stop_timer/" + session);
+                    HttpURLConnection con = (HttpURLConnection) endpointURL.openConnection();
+                    con.setRequestMethod("POST");
+                    con.setRequestProperty("Content-Type", "application/json");
+                    String data = new Gson().toJson(palavras);
+                    con.setDoOutput(true);
+                    con.getOutputStream().write(data.getBytes());
+
+                    if (con.getResponseCode() == 201) {
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+    }
+
+    public static void getGameState(final EquipeJoga equipeJoga, final int session) {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    URL endpointURL = new URL(endpoint + "get_teams/" + session);
+                    HttpURLConnection con = (HttpURLConnection) endpointURL.openConnection();
+                    if (con.getResponseCode() == 200) {
+                        InputStream responseBody = con.getInputStream();
+                        BufferedReader r = new BufferedReader(new InputStreamReader(responseBody));
+                        StringBuilder everything = new StringBuilder();
+                        String line;
+                        while( (line = r.readLine()) != null) {
+                            everything.append(line);
+                        }
+
+                        final GameState gameObject = new Gson().fromJson(everything.toString(), GameState.class);
+
+                        Handler mainHandler = new Handler(((AppCompatActivity) equipeJoga).getMainLooper());
+                        mainHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                equipeJoga.getGameState(gameObject);
+                            }
+                        });
+                    }
+
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
 
 }

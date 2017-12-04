@@ -46,11 +46,12 @@ public class Equipe implements Serializable{
 }
 
 
-class EquipeJson {
+class GameState {
     public int num_jogadores;
     public int connected;
     public ArrayList<String> words;
     public int timestamp;
     public ArrayList<String> nome_equipes;
     public HashMap<String, List<String>> equipes;
+    public int words_version;
 }

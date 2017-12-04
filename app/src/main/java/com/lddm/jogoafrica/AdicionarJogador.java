@@ -168,12 +168,12 @@ public class AdicionarJogador extends AppCompatActivity implements GetTeams {
      }
 
     @Override
-    public void getTeammates(EquipeJson equipeJson) {
+    public void getTeammates(GameState gameState) {
         handler.removeCallbacks(runnable);
         equipe = new ArrayList<>();
         jogadores = new ArrayList<>();
             List<Jogador> jogadoresAtuais = new ArrayList<>();
-        for (HashMap.Entry<String,List<String>> entry : equipeJson.equipes.entrySet()) {
+        for (HashMap.Entry<String,List<String>> entry : gameState.equipes.entrySet()) {
             String key = entry.getKey();
             List<String> value = entry.getValue();
             for (String s : value) {
@@ -191,7 +191,7 @@ public class AdicionarJogador extends AppCompatActivity implements GetTeams {
 
         Intent changeScreen = new Intent(AdicionarJogador.this, TelaPreparacao.class);
         changeScreen.putExtra("listaEquipes", (Serializable) equipe);
-        changeScreen.putExtra("todasPalavras", equipeJson.words);
+        changeScreen.putExtra("todasPalavras", gameState.words);
         startActivity(changeScreen);
 
     }

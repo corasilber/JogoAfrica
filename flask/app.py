@@ -16,6 +16,7 @@ class Session:
 		self.equipes = {}
 		self.timestamp = 0
 		self.num_jogadores = 0
+		self.words_version = 0
 
 a = Session()
 a.nome_equipes = ["Equipe 1", "Equipe 2"]
@@ -104,7 +105,9 @@ def start_timer(session):
 
 	if sessions[session].timestamp == 0:
 		sessions[session].timestamp = int(round(time() * 1000))
-	return str(sessions[session].timestamp).split('.')[0], 200
+		return 'true', 200
+	else:
+		return 'false', 200
 
 @app.route('/get_timer/<int:session>', methods=['GET'])
 def get_timer(session):
@@ -124,8 +127,14 @@ def stop_timer(session):
 	sessions[session].timestamp = 0
 	sessions[session].words = request.get_json()
 	print(sessions[session].words)
+	sessions[session].words_version += 1
 	return "", 201
 
+@app.route('/get_game_state/<int:session>', methods=['GET'])
+def get_game_state(session):
+	if session not in sessions:
+		abort(400)
 
+	return dumps(sessions[session].__dict__), 200
 if __name__ == '__main__':
     app.run(debug=True)

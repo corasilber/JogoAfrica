@@ -29,8 +29,9 @@ public class EquipeJoga extends AppCompatActivity {
     ArrayAdapter<String> adapter;
     private Handler handler = new Handler();
     private Runnable runnable;
-
-
+    private Runnable getNewWords;
+    private boolean comecouJogo = false;
+    private int versaoPalavras = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +73,8 @@ public class EquipeJoga extends AppCompatActivity {
         jogar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            Networking.startTimer(EquipeJoga.this, MainActivity.session);
+                comecouJogo = true;
+                Networking.startTimer(EquipeJoga.this, MainActivity.session);
             }
         });
 
@@ -80,16 +82,33 @@ public class EquipeJoga extends AppCompatActivity {
             @Override
             public void run() {
                 Networking.getTimer(EquipeJoga.this, MainActivity.session);
-                handler.postDelayed(this, 3000);
+                handler.postDelayed(this, 1000);
             }
         };
-        handler.postDelayed(runnable, 3000);
+
+        getNewWords = new Runnable() {
+            @Override
+            public void run() {
+                Networking.getGameState(EquipeJoga.this, MainActivity.session);
+                handler.postDelayed(this, 1000);
+
+            }
+        };
+        listenToServer();
        }
 
 
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (comecouJogo) {
+            Networking.stopTimer(this, MainActivity.session, todasPalavras);
+            comecouJogo = false;
+            listenToServer();
+        } else {
+            handler.postDelayed(getNewWords, 1000);
+        }
 
         pontuacao = data.getIntExtra("pontuacao", 0);
         int pontInicial = listaEquipes.get(countEquipe % listaEquipes.size()).getPontuacao();
@@ -104,6 +123,7 @@ public class EquipeJoga extends AppCompatActivity {
         countEquipe++;
         qtdPalavras++;
         todasPalavras = data.getStringArrayListExtra("SOBRANDO");
+
 
 
         if(qualFase < 4) {
@@ -163,6 +183,10 @@ public class EquipeJoga extends AppCompatActivity {
         }
     }
 
+    public void didStartGame(boolean didStart) {
+        comecouJogo = didStart;
+    }
+
     public void startGame(long timestamp) {
         if (timestamp > 0) {
             handler.removeCallbacks(runnable);
@@ -176,6 +200,20 @@ public class EquipeJoga extends AppCompatActivity {
             changeScreen.putExtra("targetTime", timestamp);
             startActivityForResult(changeScreen, 1);
         }
+    }
+
+    public void getGameState(GameState gameState) {
+        if (gameState.words_version > versaoPalavras) {
+            handler.removeCallbacks(getNewWords);
+            versaoPalavras = gameState.words_version;
+            todasPalavras = gameState.words;
+            listenToServer();
+        }
+    }
+
+    private void listenToServer() {
+        handler.postDelayed(runnable, 1000);
+
     }
 
 }
