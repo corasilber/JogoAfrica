@@ -132,6 +132,10 @@ public class EquipeJoga extends AppCompatActivity implements GameStateInterface{
         populaListaPontuacao();
         adapter.notifyDataSetChanged(); //atualiza a pontuação das equipes
 
+        if (palavras.isEmpty()) {
+            qualFase++;
+            todasPalavras = new ArrayList<>(todasPalavrasClone);
+        }
         setaFaseTextView();
 
         countEquipe++;

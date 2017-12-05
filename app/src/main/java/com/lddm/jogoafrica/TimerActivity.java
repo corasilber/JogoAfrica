@@ -70,6 +70,7 @@ public class TimerActivity extends AppCompatActivity implements GameStateInterfa
         palavras =(ArrayList<String>) getIntent().getSerializableExtra("todasPalavras");
         palavrasClone = (ArrayList<String>) getIntent().getSerializableExtra("todasPalavrasClone");
         listaEquipes =  (List<Equipe>) getIntent().getSerializableExtra("listaEquipes");
+        Intent intent = getIntent();
         comecouJogo = getIntent().getBooleanExtra("comecouJogo", false);
 
         fase = getIntent().getIntExtra("fase", 0);
@@ -83,19 +84,20 @@ public class TimerActivity extends AppCompatActivity implements GameStateInterfa
 
         mudarPalavra();
 
-        // ShakeDetector initialization
-        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        mAccelerometer = mSensorManager
-                .getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        mShakeDetector = new ShakeDetector();
-        mShakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
+        if (comecouJogo) {
+            // ShakeDetector initialization
+            mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+            mAccelerometer = mSensorManager
+                    .getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            mShakeDetector = new ShakeDetector();
+            mShakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
 
-            @Override
-            public void onShake(int count) {
-                mudarPalavra();
-            }
-        });
-
+                @Override
+                public void onShake(int count) {
+                    mudarPalavra();
+                }
+            });
+        }
         timer  = new CountDownTimer(timestamp, 100) {
             @Override
             public void onTick(long l) {
@@ -122,6 +124,8 @@ public class TimerActivity extends AppCompatActivity implements GameStateInterfa
             if(comecouJogo) {
                 palavraTextView.setText(palavras.remove(random.nextInt(palavras.size())));
                 contadorTextView.setText((++corretos) + "");
+            } else {
+                palavraTextView.setText("");
             }
         } else {
             corretos++;
