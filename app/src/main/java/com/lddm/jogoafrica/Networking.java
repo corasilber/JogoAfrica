@@ -292,6 +292,8 @@ public class Networking {
                             everything.append(line);
                         }
 
+                        line = everything.toString();
+                        if (line.startsWith("Collecting") || line.startsWith("cole")) return;
                         final GameState gameObject = new Gson().fromJson(everything.toString(), GameState.class);
 
                         Handler mainHandler = new Handler(((AppCompatActivity) equipeJoga).getMainLooper());
