@@ -9,12 +9,9 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.widget.TextView;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -52,7 +49,7 @@ public class TimerActivity extends AppCompatActivity implements GameStateInterfa
         @Override
         public void run() {
             Networking.getGameState(TimerActivity.this, MainActivity.session);
-            handler.postDelayed(this, 1000);
+            handler.postDelayed(this, 500);
         }
     };
 

@@ -31,7 +31,7 @@ public class EquipeJoga extends AppCompatActivity implements GameStateInterface{
         @Override
         public void run() {
             Networking.getGameState(EquipeJoga.this, MainActivity.session);
-            handler.postDelayed(this, 1000);
+            handler.postDelayed(this, 500);
         }
     };
     private boolean comecouJogo = false;
@@ -54,7 +54,6 @@ public class EquipeJoga extends AppCompatActivity implements GameStateInterface{
         pontuacaoEquipes = new ArrayList<>();
 
         populaListaPontuacao();
-        qualFase = 0;
 
         adapter = new ArrayAdapter<>(this, R.layout.item_lista,R.id.listaView, pontuacaoEquipes);
         ListView list = (ListView) findViewById(R.id.pontuacao);
@@ -107,15 +106,14 @@ public class EquipeJoga extends AppCompatActivity implements GameStateInterface{
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (comecouJogo) {
             Networking.stopTimer(this, MainActivity.session, data.getStringArrayListExtra("SOBRANDO"));
-            comecouJogo = false;
-            versaoPalavras++;
-
-            activityResultServidor(data.getStringArrayListExtra("SOBRANDO"));
+            handler.postDelayed(gameStateRunnable, 500);
         } else {
             handler.postDelayed(gameStateRunnable, 500);
         }
 
-        qualFase = data.getIntExtra("fase", 0);
+//        qualFase = data.getIntExtra("fase", 0);
+
+        comecouJogo = false;
 
 
         super.onActivityResult(requestCode, resultCode, data);
@@ -209,6 +207,7 @@ public class EquipeJoga extends AppCompatActivity implements GameStateInterface{
         if (timestamp > 0) {
             handler.removeCallbacks(runnable);
             handler.removeCallbacks(getNewWords);
+            handler.removeCallbacks(gameStateRunnable);
             Intent changeScreen = new Intent(EquipeJoga.this, TimerActivity.class);
             changeScreen.putExtra("todasPalavras", todasPalavras);
             changeScreen.putExtra("todasPalavrasClone", todasPalavrasClone);
@@ -227,7 +226,6 @@ public class EquipeJoga extends AppCompatActivity implements GameStateInterface{
         if (gameState.words_version > versaoPalavras) {
             handler.removeCallbacks(gameStateRunnable);
             versaoPalavras = gameState.words_version;
-            todasPalavras = gameState.words;
             activityResultServidor(gameState.words);
         }
     }
