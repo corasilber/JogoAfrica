@@ -27,11 +27,8 @@
         android:id="@+id/listaPalavras"
         android:layout_width="340dp"
         android:layout_height="319dp"
-        android:layout_marginBottom="72dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="9dp"
         android:textSize="40dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView17"
-        app:layout_constraintVertical_bias="0.9"
-        tools:layout_editor_absoluteX="10dp" />
+        tools:layout_editor_absoluteX="16dp" />
 </android.support.constraint.ConstraintLayout>

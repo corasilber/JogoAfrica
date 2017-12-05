@@ -136,7 +136,7 @@ public class AdicionarJogador extends AppCompatActivity implements GetTeams {
        jogar.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View view) {
-            adicionaJogadoresNaListaEquipe();
+          //  adicionaJogadoresNaListaEquipe();
             Networking.enviarJogadores(jogadores, MainActivity.session);
             handler.postDelayed(runnable, 3000);
 
@@ -194,6 +194,7 @@ public class AdicionarJogador extends AppCompatActivity implements GetTeams {
             e.setNome(key);
             e.setListaJogador(jogadoresAtuais);
             equipe.add(e);
+            jogadoresAtuais = new ArrayList<>();
         }
 
 

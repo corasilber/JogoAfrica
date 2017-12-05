@@ -231,7 +231,7 @@ public class Networking {
                         InputStream responseBody = con.getInputStream();
                         BufferedReader r = new BufferedReader(new InputStreamReader(responseBody));
                         final long timestamp = Long.parseLong(r.readLine());
-                        final long adjestedTimestamp = timestamp != 0 ? 60 * 1000 - timestamp : 0;
+                        final long adjestedTimestamp = timestamp != 0 ? 10 * 1000 - timestamp : 0;
                         Handler mainHandler = new Handler(((AppCompatActivity) tp).getMainLooper());
                         mainHandler.post(new Runnable() {
                             @Override

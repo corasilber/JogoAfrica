@@ -127,6 +127,7 @@ public class EquipeJoga extends AppCompatActivity implements GameStateInterface{
         pontuacao = todasPalavras.size() - palavras.size();
         todasPalavras = palavras;
         int pontInicial = listaEquipes.get(countEquipe % listaEquipes.size()).getPontuacao();
+
         listaEquipes.get(countEquipe % listaEquipes.size()).setPontuacao(pontuacao + pontInicial);
         pontuacaoEquipes.clear(); // limpa a lista atual
         populaListaPontuacao();
