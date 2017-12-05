@@ -33,6 +33,7 @@ public class Networking {
 //    private static String endpoint = "http://10.0.2.2:5000/";
   // private static String endpoint = "http://augusto2112.pythonanywhere.com/";
     private static String endpoint = "http://corasilber.pythonanywhere.com/";
+    public static int session;
 
     public static void createSession(final MainActivity c) {
         AsyncTask.execute(new Runnable() {
@@ -249,7 +250,7 @@ public class Networking {
         });
     }
 
-    public static void stopTimer(final EquipeJoga tp, final int session, final ArrayList<String> palavras) {
+    public static void stopTimer(final EquipeJoga tp, final int session2, final ArrayList<String> palavras) {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
@@ -275,7 +276,7 @@ public class Networking {
         });
     }
 
-    public static void getGameState(final GameStateInterface equipeJoga, final int session) {
+    public static void getGameState(final GameStateInterface equipeJoga, final int session2) {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {

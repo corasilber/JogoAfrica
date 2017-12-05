@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity  {
 
     Button button, conectar, palavras;
-    public static int session;
+    public static int session = -1;
     private Handler handler = new Handler();
     private Runnable runnable;
     @Override
@@ -84,6 +84,7 @@ public class MainActivity extends AppCompatActivity  {
 
     public void setSession(int session) {
         MainActivity.session = session;
+        Networking.session = session;
         AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
         alertDialog.setTitle("Alert");
         alertDialog.setMessage("Informe aos jogadores o código: " + MainActivity.session);
