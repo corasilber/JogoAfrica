@@ -113,7 +113,6 @@ public class EquipeJoga extends AppCompatActivity implements GameStateInterface{
             activityResultServidor(data.getStringArrayListExtra("SOBRANDO"));
         } else {
             handler.postDelayed(gameStateRunnable, 500);
-            handler.postDelayed(getNewWords, 500);
         }
 
         qualFase = data.getIntExtra("fase", 0);
