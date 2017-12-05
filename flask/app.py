@@ -126,7 +126,10 @@ def stop_timer(session):
 		abort(400)
 
 	sessions[session].timestamp = 0
-	sessions[session].words = request.get_json()
+	if request.get_json() == '[]':
+		sessions[session].words = []
+	else:
+		sessions[session].words = request.get_json()
 	print(sessions[session].words)
 	sessions[session].words_version += 1
 	return "", 201

@@ -31,9 +31,8 @@ interface GameStateInterface {
 
 public class Networking {
 //    private static String endpoint = "http://10.0.2.2:5000/";
-  // private static String endpoint = "http://augusto2112.pythonanywhere.com/";
-    private static String endpoint = "http://corasilber.pythonanywhere.com/";
-    public static int session;
+   private static String endpoint = "http://augusto2112.pythonanywhere.com/";
+//    private static String endpoint = "http://corasilber.pythonanywhere.com/";
 
     public static void createSession(final MainActivity c) {
         AsyncTask.execute(new Runnable() {
@@ -106,19 +105,23 @@ public class Networking {
                         while( (line = r.readLine()) != null) {
                             everything.append(line);
                         }
+                        try {
+                            final GameState gameObject = new Gson().fromJson(everything.toString(), GameState.class);
+                            final ArrayList<String> arrayList = gameObject.nome_equipes;
+                            final int numJogadores = gameObject.num_jogadores;
 
-                        final GameState gameObject = new Gson().fromJson(everything.toString(), GameState.class);
-                        final ArrayList<String> arrayList = gameObject.nome_equipes;
-                        final int numJogadores = gameObject.num_jogadores;
+                            Handler mainHandler = new Handler(((AppCompatActivity) c).getMainLooper());
+                            final ArrayList<String> finalArrayList = arrayList;
+                            mainHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    c.getTeams(finalArrayList, numJogadores);
+                                }
+                            });
 
-                        Handler mainHandler = new Handler(((AppCompatActivity) c).getMainLooper());
-                        final ArrayList<String> finalArrayList = arrayList;
-                        mainHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                c.getTeams(finalArrayList, numJogadores);
-                            }
-                        });
+                        } catch (Exception e ) {
+
+                        }
                     }
 
 
@@ -172,16 +175,19 @@ public class Networking {
                         while( (line = r.readLine()) != null) {
                             everything.append(line);
                         }
-                        final GameState teams = new Gson().fromJson(everything.toString(), GameState.class);
+                        try {
+                            final GameState teams = new Gson().fromJson(everything.toString(), GameState.class);
 
 
-                        Handler mainHandler = new Handler(((AppCompatActivity) c).getMainLooper());
-                        mainHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                c.getTeammates(teams);
-                            }
-                        });
+                            Handler mainHandler = new Handler(((AppCompatActivity) c).getMainLooper());
+                            mainHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    c.getTeammates(teams);
+                                }
+                            });
+
+                        } catch (Exception e) {}
                     }
 
 
@@ -250,7 +256,7 @@ public class Networking {
         });
     }
 
-    public static void stopTimer(final EquipeJoga tp, final int session2, final ArrayList<String> palavras) {
+    public static void stopTimer(final EquipeJoga tp, final int session, final ArrayList<String> palavras) {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
@@ -276,7 +282,7 @@ public class Networking {
         });
     }
 
-    public static void getGameState(final GameStateInterface equipeJoga, final int session2) {
+    public static void getGameState(final GameStateInterface equipeJoga, final int session) {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
@@ -293,16 +299,21 @@ public class Networking {
                         }
 
                         line = everything.toString();
-                        if (line.startsWith("Collecting") || line.startsWith("cole")) return;
-                        final GameState gameObject = new Gson().fromJson(everything.toString(), GameState.class);
+                        try {
+                            if (line.startsWith("Collecting") || line.startsWith("cole")) return;
+                            final GameState gameObject = new Gson().fromJson(everything.toString(), GameState.class);
 
-                        Handler mainHandler = new Handler(((AppCompatActivity) equipeJoga).getMainLooper());
-                        mainHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                equipeJoga.getGameState(gameObject);
-                            }
-                        });
+                            Handler mainHandler = new Handler(((AppCompatActivity) equipeJoga).getMainLooper());
+                            mainHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    equipeJoga.getGameState(gameObject);
+                                }
+                            });
+
+                        } catch (Exception e){
+
+                        }
                     }
 
 

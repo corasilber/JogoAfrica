@@ -49,7 +49,7 @@ public class TimerActivity extends AppCompatActivity implements GameStateInterfa
         @Override
         public void run() {
             Networking.getGameState(TimerActivity.this, MainActivity.session);
-            handler.postDelayed(this, 1000);
+            handler.postDelayed(this, 500);
         }
     };
 
@@ -111,18 +111,19 @@ public class TimerActivity extends AppCompatActivity implements GameStateInterfa
         };
         timer.start();
         if (!comecouJogo)
-            handler.postDelayed(runnable, 1000);
+            handler.postDelayed(runnable, 500);
     }
 
     private void mudarPalavra() {
         if (!palavras.isEmpty() ) {
             Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-            vibrator.vibrate(1000);
+            vibrator.vibrate(500);
             if(comecouJogo) {
                 palavraTextView.setText(palavras.remove(random.nextInt(palavras.size())));
                 contadorTextView.setText((++corretos) + "");
             } else {
                 palavraTextView.setText("");
+                contadorTextView.setText("");
             }
         } else {
             corretos++;

@@ -31,7 +31,7 @@ public class EquipeJoga extends AppCompatActivity implements GameStateInterface{
         @Override
         public void run() {
             Networking.getGameState(EquipeJoga.this, MainActivity.session);
-            handler.postDelayed(this, 1000);
+            handler.postDelayed(this, 500);
         }
     };
     private boolean comecouJogo = false;
@@ -85,7 +85,7 @@ public class EquipeJoga extends AppCompatActivity implements GameStateInterface{
             @Override
             public void run() {
                 Networking.getTimer(EquipeJoga.this, MainActivity.session);
-                handler.postDelayed(this, 1000);
+                handler.postDelayed(this, 500);
             }
         };
 
@@ -93,7 +93,7 @@ public class EquipeJoga extends AppCompatActivity implements GameStateInterface{
             @Override
             public void run() {
                 Networking.getGameState(EquipeJoga.this, MainActivity.session);
-                handler.postDelayed(this, 1000);
+                handler.postDelayed(this, 500);
 
             }
         };
@@ -106,9 +106,9 @@ public class EquipeJoga extends AppCompatActivity implements GameStateInterface{
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (comecouJogo) {
             Networking.stopTimer(this, MainActivity.session, data.getStringArrayListExtra("SOBRANDO"));
-            handler.postDelayed(gameStateRunnable, 1000);
+            handler.postDelayed(gameStateRunnable, 500);
         } else {
-            handler.postDelayed(gameStateRunnable, 1000);
+            handler.postDelayed(gameStateRunnable, 500);
         }
 
 //        qualFase = data.getIntExtra("fase", 0);
@@ -193,7 +193,7 @@ public class EquipeJoga extends AppCompatActivity implements GameStateInterface{
         if(qualFase == 0){
             fase.setText("DESCREVA A PALAVRA");
         }else if(qualFase == 1){
-            fase.setText("DESCREVA A PALAVRA USANDO SOMENTE UMA PALAVRA");
+            fase.setText("DESCREVA USANDO UMA PALAVRA");
         } else if(qualFase == 2){
             fase.setText("FAÇA UMA MÍMICA");
         }
@@ -231,7 +231,7 @@ public class EquipeJoga extends AppCompatActivity implements GameStateInterface{
     }
 
     private void listenToServer() {
-        handler.postDelayed(runnable, 1000);
+        handler.postDelayed(runnable, 500);
     }
 
 }

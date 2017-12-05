@@ -49,7 +49,7 @@ public class AdicionarJogador extends AppCompatActivity implements GetTeams {
             @Override
             public void run() {
                 Networking.buscarJogadores(AdicionarJogador.this, MainActivity.session);
-                handler.postDelayed(this, 3000);
+                handler.postDelayed(this, 500);
             }
         };
        // quantidadePalavras = Integer.parseInt(getIntent().getStringExtra("qtdPalavras")); // pega a qtd palavras do outro intent
@@ -138,7 +138,7 @@ public class AdicionarJogador extends AppCompatActivity implements GetTeams {
            public void onClick(View view) {
           //  adicionaJogadoresNaListaEquipe();
             Networking.enviarJogadores(jogadores, MainActivity.session);
-            handler.postDelayed(runnable, 3000);
+            handler.postDelayed(runnable, 500);
 
            }
        });
