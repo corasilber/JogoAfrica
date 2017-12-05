@@ -49,7 +49,7 @@ def get_teams(session):
 		abort(400)
 	print(sessions[session])
 	return dumps(sessions[session].__dict__)
-	
+
 @app.route('/send_team_members/<int:session>', methods=['POST'])
 def send_team_members(session):
 	if not request.json or session not in sessions:
@@ -96,7 +96,7 @@ def is_words_complete(session):
 		abort(400)
 
 	num_jogadores = sum([len(j) for _, j in sessions[session].nome_equipes])
-	return str(len(sessions[session].words) >= num_jogadores * 3), 200	
+	return str(len(sessions[session].words) >= num_jogadores * 3), 200
 
 @app.route('/start_timer/<int:session>', methods=['GET'])
 def start_timer(session):
@@ -136,7 +136,7 @@ def get_game_state(session):
 	if session not in sessions:
 		abort(400)
 	return dumps(sessions[session].__dict__)
- 
+
 
 	return dumps(sessions[session].__dict__), 200
 if __name__ == '__main__':

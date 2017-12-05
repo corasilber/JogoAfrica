@@ -141,7 +141,7 @@ public class EquipeJoga extends AppCompatActivity implements GameStateInterface{
         countEquipe++;
         qtdPalavras++;
 
-        if(qualFase < 4) {
+        if(qualFase < 3) {
             //já rodou por todas equipes -> muda jogador
             if (countEquipe % listaEquipes.size() == 0) {
                 countJogador++;
