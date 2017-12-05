@@ -31,7 +31,7 @@ public class EquipeJoga extends AppCompatActivity implements GameStateInterface{
         @Override
         public void run() {
             Networking.getGameState(EquipeJoga.this, MainActivity.session);
-            handler.postDelayed(this, 500);
+            handler.postDelayed(this, 1000);
         }
     };
     private boolean comecouJogo = false;
@@ -106,9 +106,9 @@ public class EquipeJoga extends AppCompatActivity implements GameStateInterface{
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (comecouJogo) {
             Networking.stopTimer(this, MainActivity.session, data.getStringArrayListExtra("SOBRANDO"));
-            handler.postDelayed(gameStateRunnable, 500);
+            handler.postDelayed(gameStateRunnable, 1000);
         } else {
-            handler.postDelayed(gameStateRunnable, 500);
+            handler.postDelayed(gameStateRunnable, 1000);
         }
 
 //        qualFase = data.getIntExtra("fase", 0);

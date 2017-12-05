@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity  {
             @Override
             public void run() {
                 Networking.buscarEquipes(MainActivity.this, MainActivity.session);
-                handler.postDelayed(this, 5000);
+                handler.postDelayed(this, 1000);
             }
         };
 
